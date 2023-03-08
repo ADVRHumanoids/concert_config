@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../concert_description"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../modular"
+		},
+		{
+			"path": "../../ros_src/modularbot"
+		},
+		{
+			"path": "../ec_xbot2_client"
+		}
+	]
+}
