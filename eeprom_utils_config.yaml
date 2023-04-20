@@ -1,0 +1,13 @@
+# Config for writing module_params on eeprom
+# Usage: eeprom_utils {path}/eeprom_utils_config.yaml
+
+eeprom:
+  # mapping of esc_pos 
+  module_params : {
+                    51: 0x00000441, 
+                    52: 0x00000641, 
+                    53: 0x00000641, 
+                    54: 0x00000541,
+                    55: 0x00000341, 
+                    56: 0x00000341
+                  } 
