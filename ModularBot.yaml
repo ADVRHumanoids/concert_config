@@ -5,7 +5,7 @@ XBotInterface:
 
 ModelInterface:
     model_type: RBDL
-    is_model_floating_base: false
+    is_model_floating_base: true
 
 
 xbotcore_device_configs:
@@ -47,29 +47,39 @@ xbotcore_plugins:
         thread: nrt_main
         type: ec_ros
 
-    gcomp:
-        thread: rt_main
-        type: thalesarm_gcomp
-
     cartesio_imp: 
         thread: rt_main 
         type: albero_cartesio_rt
         params:
             enabled_chains: 
-                value: [chain_A]
+                value: [chain_E]
                 type: vector<string>
             problem_description:
                 value: $PWD/ModularBot_impedance_config.yaml
                 type: file
             solver: {value: AlberoImpedance, type: string}
             enable_feedback: {value: true, type: bool}
-            fc_map: {value: {low: 0.95, high: 0.99}, type: map<double>}
-        
+            fc_map: {value: {low: 0.95, high: 0.95}, type: map<double>}
+
+    # thalesarm_gcomp:
+    #     type: thalesarm_gcomp
+    #     thread: rt_main
+    #     params:
+    #         enabled_chains: 
+    #             value: [chain_E]
+    #             type: vector<string>
+
+    gcomp_example:
+        type: gcomp_example
+        thread: rt_main
+        params:
+            enabled_chains: 
+                value: [chain_E]
+                type: vector<string>
 
 xbotcore_param:
-    /jm/tx_filter_autostart:
-        value: true
+    /xbot/hal/joint_safety/filter_autostart: {value: true, type: bool}
+    /xbot/hal/joint_safety/filter_cutoff_hz: {value: 2.0, type: double}
+    /xbot/trigger_safety_on_shutdown:
+        value: false
         type: bool
-    /jm/tx_filter_cutoff:
-        value: 2.0
-        type: double
