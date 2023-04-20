@@ -2,12 +2,21 @@
 # Usage: eeprom_utils {path}/eeprom_utils_config.yaml
 
 eeprom:
-  # mapping of esc_pos 
-  module_params : {
+
+  use_pos: false
+  
+  # mapping of esc_pos  -> module_params 
+  module_params_rid : {
                     51: 0x00000441, 
                     52: 0x00000641, 
                     53: 0x00000641, 
                     54: 0x00000541,
                     55: 0x00000341, 
-                    56: 0x00000341
+                    56: 0x00000341,
                   } 
+  
+  # mapping of esc_pos -> module_params 
+  module_params_pos : {
+                    # to be used for passive link 20 cm
+                    6: 0x00000444
+  }
