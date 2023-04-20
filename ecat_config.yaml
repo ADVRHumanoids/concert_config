@@ -141,84 +141,113 @@ TestESC_X:
      wrd : [ "ts&&rtt" ]
 
 
-# params:
-#   - &current_max_steering 10
-#   - &current_max_wheel 10
-#   - &current_max_arm 20
+params:
+  - &current_max_steering 10
+  - &current_max_wheel 10
+  - &current_max_arm 20
 
-# with_aux_current: &with_aux_current
-#   aux_pdo : # names defined in SDO index 0x8002 
-#       rd :  [ iq_ref_fb, iq_out_fb ]
+with_aux_current: &with_aux_current
+  aux_pdo: # names defined in SDO index 0x8002 
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_11: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_steering
+CentAcESC_11: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_steering
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_21: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_steering
-
-# CentAcESC_31: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_steering
-
-# CentAcESC_41: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_steering
+CentAcESC_21: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_steering
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
 
-# CentAcESC_12: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_wheel
+CentAcESC_31: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_steering
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_22: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_wheel
-
-# CentAcESC_32: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_wheel
-
-# CentAcESC_42: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_wheel
+CentAcESC_41: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_steering
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
 
+CentAcESC_12: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_wheel
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_51: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_arm
+CentAcESC_22: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_wheel
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_52: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_arm
+CentAcESC_32: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_wheel
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_53: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_arm
+CentAcESC_42: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_wheel
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
 
-# CentAcESC_54: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_arm
 
-# CentAcESC_55: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_arm
+
+CentAcESC_51: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_arm
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
+
+CentAcESC_52: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_arm
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
+
+CentAcESC_53: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_arm
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
+
+CentAcESC_54: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_arm
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
+
+CentAcESC_55: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_arm
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
   
-# CentAcESC_56: *with_aux_current
-#   sign: 1
-#   pos_offset: 0.0
-#   max_current_A: *current_max_arm
+CentAcESC_56: 
+  sign: 1
+  pos_offset: 0.0
+  max_current_A: *current_max_arm
+  aux_pdo : # names defined in SDO index 0x8002
+    rd :  [ iq_ref_fb, iq_out_fb ]
