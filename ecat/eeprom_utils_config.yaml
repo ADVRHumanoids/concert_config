@@ -7,16 +7,33 @@ eeprom:
   
   # mapping of esc_pos  -> module_params 
   module_params_rid : {
+                    # arm joints
                     51: 0x00000441, 
                     52: 0x00000641, 
                     53: 0x00000641, 
                     54: 0x00000541,
                     55: 0x00000341, 
                     56: 0x00000341,
+                    # steering joints
+                    11: 0x00000751,
+                    21: 0x00000851,
+                    31: 0x00000751,
+                    41: 0x00000851,
+                    # wheels
+                    12: 0x00000155,
+                    22: 0x00000155,
+                    32: 0x00000155,
+                    42: 0x00000155,
+                    # mobile base powerboard
+                    201: 0x00000302,
                   } 
   
   # mapping of esc_pos -> module_params 
   module_params_pos : {
                     # to be used for passive link 20 cm
-                    6: 0x00000444
+                    # 6: 0x00000444
+                    
+                    # hub powerboard
+                    # 2: 0x00000302,
+
   }
