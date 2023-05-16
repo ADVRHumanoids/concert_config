@@ -38,6 +38,16 @@ xbotcore_plugins:
     ros_ctrl:
         thread: nrt_main
         type: ros_control
+        params:
+            ctrl_override:
+                value: {J1_E: 0, 
+                        J2_E: 0,
+                        J3_E: 0,
+                        J4_E: 0,
+                        J5_E: 0,
+                        J6_E: 0
+                    }
+                type: map<string, int>
     
     homing:
         thread: rt_main
@@ -46,6 +56,25 @@ xbotcore_plugins:
     ec_ros:
         thread: nrt_main
         type: ec_ros
+
+    omnisteering:
+        thread: nrt_main
+        type: omnisteering_controller_plugin
+        params:
+            wheel_names:
+                value: [wheel_A, wheel_B, wheel_C, wheel_D]
+                type: vector<string>
+            wheel_radius:
+                value: [0.16, 0.16, 0.16, 0.16]
+                type: vector<double>
+
+    adjust_wheels:
+        thread: nrt_main
+        type: adjust_wheels
+        params:
+            adjust_time:
+                value: 3.0
+                type: double
 
     cartesio_imp: 
         thread: rt_main 
