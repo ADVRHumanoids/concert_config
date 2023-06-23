@@ -29,6 +29,11 @@ xbotcore_threads:
         period: 0.005
 
 
+.ctrl_override: &ctrl_override
+  type: map<int>
+  value:
+    dagana_E_claw_joint: 0
+
 xbotcore_plugins:
     
     ros_io:
@@ -38,20 +43,19 @@ xbotcore_plugins:
     ros_ctrl:
         thread: nrt_main
         type: ros_control
-        params:
-            ctrl_override:
-                value: {J1_E: 0, 
-                        J2_E: 0,
-                        J3_E: 0,
-                        J4_E: 0,
-                        J5_E: 0,
-                        J6_E: 0
-                    }
-                type: map<string, int>
     
     homing:
         thread: rt_main
         type: homing
+        params:
+          ctrl_override: *ctrl_override
+
+    # interaction_homing:
+    #     thread: rt_main
+    #     type: homing
+    #     params:
+    #       ctrl_override: *ctrl_override
+    #       qhome: {value: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.9,0.0,-1.0], type: Eigen::VectorXd} 
     
     ec_ros:
         thread: nrt_main
@@ -67,19 +71,21 @@ xbotcore_plugins:
             wheel_radius:
                 value: [0.16, 0.16, 0.16, 0.16]
                 type: vector<double>
+                
 
     adjust_wheels:
         thread: nrt_main
         type: adjust_wheels
         params:
             adjust_time:
-                value: 3.0
+                value: 10.0
                 type: double
 
     cartesio_imp: 
         thread: rt_main 
         type: albero_cartesio_rt
         params:
+            ctrl_override: *ctrl_override
             enabled_chains: 
                 value: [chain_E]
                 type: vector<string>
@@ -88,20 +94,30 @@ xbotcore_plugins:
                 type: file
             solver: {value: AlberoImpedance, type: string}
             enable_feedback: {value: true, type: bool}
-            fc_map: {value: {low: 0.95, high: 0.95}, type: map<double>}
+            fc_map: {value: {low: 0.9, high: 0.95}, type: map<double>}
+            use_payload_estimator:
+              value: true  # note: keep false if you care to live
+              type: bool
+            payload_estimator_link:
+              value: ee_E
+              type: string
 
-    # thalesarm_gcomp:
-    #     type: thalesarm_gcomp
-    #     thread: rt_main
-    #     params:
-    #         enabled_chains: 
-    #             value: [chain_E]
-    #             type: vector<string>
+    force_follow_me:
+        type: force_follow_me
+        thread: nrt_main
+        params: 
+          max_force: { value: 30.0, type: double }
+          max_lin_velocity:  { value: 0.40, type: double }
+          max_ang_velocity:  { value: 0.60, type: double }
+          force_threshold: { value: 5.0, type: double }
+        remap:
+          cmd_vel_V6: omnisteering/cmd_vel_V6
 
     gcomp_example:
         type: gcomp_example
         thread: rt_main
         params:
+            ctrl_override: *ctrl_override
             enabled_chains: 
                 value: [chain_E]
                 type: vector<string>
@@ -110,5 +126,8 @@ xbotcore_param:
     /xbot/hal/joint_safety/filter_autostart: {value: true, type: bool}
     /xbot/hal/joint_safety/filter_cutoff_hz: {value: 2.0, type: double}
     /xbot/trigger_safety_on_shutdown:
-        value: false
+        value: true
+        type: bool
+    /xbot/hal/joint_safety/hack/disable_filter_tuning/dagana_E_claw_joint:
+        value: true
         type: bool

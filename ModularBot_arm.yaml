@@ -60,6 +60,16 @@ xbotcore_plugins:
             solver: {value: AlberoImpedance, type: string}
             enable_feedback: {value: true, type: bool}
             fc_map: {value: {low: 0.95, high: 0.95}, type: map<double>}
+            use_payload_estimator:
+              value: true  # note: keep false if you care to live
+              type: bool
+            payload_estimator_link:
+              value: ee_A
+              type: string
+            # payload_est_cov_threshold:
+            #   value: 1e-8
+            #   type: double
+
 
     # thalesarm_gcomp:
     #     type: thalesarm_gcomp

@@ -20,14 +20,14 @@ stack:
 EE:
     type: Interaction
     base_link: base_link
-    distal_link: ee_A
+    distal_link: ee_E
     stiffness:
         - 1500.0
         - 1500.0
         - 1500.0
         - 200.0
         - 200.0
-        - 200.0
+        - 20.0
     damping:
         - 0.7
         - 0.7
