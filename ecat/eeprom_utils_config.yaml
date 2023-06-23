@@ -30,10 +30,16 @@ eeprom:
   
   # mapping of esc_pos -> module_params 
   module_params_pos : {
-                    # to be used for passive link 20 cm
+                    ## to be used for passive link 20 cm
                     # 6: 0x00000444
                     
-                    # hub powerboard
+                    ## hub powerboard
                     # 2: 0x00000302,
+
+                    # # drill module
+                    # 17: 0x00000343,
+
+                    # # dagana
+                    # 17: 0x00000423,
 
   }
