@@ -106,10 +106,10 @@ xbotcore_plugins:
         type: force_follow_me
         thread: nrt_main
         params: 
-          max_force: { value: 30.0, type: double }
-          max_lin_velocity:  { value: 0.40, type: double }
-          max_ang_velocity:  { value: 0.60, type: double }
-          force_threshold: { value: 5.0, type: double }
+          max_force: { value: 65.0, type: double }
+          max_lin_velocity:  { value: 0.77, type: double }
+          max_ang_velocity:  { value: 0.70, type: double }
+          force_threshold: { value: 5.5, type: double }
         remap:
           cmd_vel_V6: omnisteering/cmd_vel_V6
 
