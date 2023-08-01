@@ -42,4 +42,7 @@ eeprom:
                     # # dagana
                     # 17: 0x00000423,
 
+                    # # 600mm passive base link module
+                    # 11: 0x00000146,
+
   }
