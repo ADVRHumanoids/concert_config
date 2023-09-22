@@ -86,6 +86,14 @@ xbotcore_plugins:
               value: ee_E
               type: string
 
+    gcomp:
+        thread: rt_main
+        type: gcomp_example
+        params:
+            enabled_chains: 
+                value: [chain_E]
+                type: vector<string>
+                
     force_follow_me:
         type: force_follow_me
         thread: nrt_main
@@ -93,7 +101,7 @@ xbotcore_plugins:
           max_force: { value: 65.0, type: double }
           max_lin_velocity:  { value: 0.77, type: double }
           max_ang_velocity:  { value: 0.70, type: double }
-          force_threshold: { value: 5.5, type: double }
+          force_threshold: { value: 6.5, type: double }
         remap:
           cmd_vel_V6: omnisteering/cmd_vel_V6
 
