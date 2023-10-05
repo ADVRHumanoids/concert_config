@@ -45,4 +45,6 @@ eeprom:
                     # # 600mm passive base link module
                     # 11: 0x00000146,
 
+                    # # to be used for passive link 40 cm
+                    # 17: 0x00000644,
   }
