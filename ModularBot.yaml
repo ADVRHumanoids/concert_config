@@ -78,7 +78,7 @@ xbotcore_plugins:
                 type: file
             solver: {value: AlberoImpedance, type: string}
             enable_feedback: {value: true, type: bool}
-            fc_map: {value: {low: 0.9, high: 0.95}, type: map<double>}
+            fc_map: {value: {low: 0.85, high: 0.99}, type: map<double>}
             use_payload_estimator:
               value: false  # note: keep false if you care to live
               type: bool
