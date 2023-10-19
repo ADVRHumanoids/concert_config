@@ -98,10 +98,20 @@ xbotcore_plugins:
         type: force_follow_me
         thread: nrt_main
         params: 
-          max_force: { value: 65.0, type: double }
-          max_lin_velocity:  { value: 0.77, type: double }
-          max_ang_velocity:  { value: 0.70, type: double }
-          force_threshold: { value: 6.5, type: double }
+            max_force: { value: 75.0, type: double }
+            max_lin_velocity:  { value: 0.77, type: double }
+            max_ang_velocity:  { value: 0.70, type: double }
+            force_threshold: { value: 8.0, type: double }
+            use_safety: {value: true, type: bool }
+            sensor_type: {value: 0, type: int} # 0 for sonar 1 for lidar [wip]
+            sensors:
+                value: [ "ultrasound_rr_lat", "ultrasound_rl_sag", "ultrasound_rl_lat", "ultrasound_fl_lat", "ultrasound_fr_lat"]  # "ultrasound_rr_sag",
+                type: vector<string>
+            sensor_threshold:
+                value: [0.75, 0.3] # max min threshold  
+                type: vector<double>
+            # sensor_link_name: {value: "handle_gripping_point_E", type: string }
+            sensor_link_name: {value: "ee_E", type: string }
         remap:
           cmd_vel_V6: omnisteering/cmd_vel_V6
 
