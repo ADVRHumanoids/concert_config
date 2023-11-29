@@ -33,8 +33,11 @@ eeprom:
                     ## to be used for passive link 20 cm
                     # 6: 0x00000444
                     
-                    ## hub powerboard
-                    # 2: 0x00000302,
+                    ## powerboard mobile_base
+                    # 1: 0x00000302,
+
+                    # hub mobile_base
+                    2: 0x00000402,
 
                     # # drill module
                     # 17: 0x00000343,
@@ -47,4 +50,10 @@ eeprom:
 
                     # # to be used for passive link 40 cm
                     # 17: 0x00000644,
+
+                    # # to be used for passive link 30 cm
+                    # 12: 0x00000744,
+
+                    # # bimanual hub
+                    # 12: 0x00000844,
   }
