@@ -49,6 +49,9 @@ xbotcore_plugins:
         type: homing
         params:
           ctrl_override: *ctrl_override
+          time:
+            type: double
+            value: 10.0
 
     ec_ros:
         thread: nrt_main
