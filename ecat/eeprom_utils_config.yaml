@@ -14,6 +14,7 @@ eeprom:
                     54: 0x00000541,
                     55: 0x00000341, 
                     56: 0x00000341,
+                    64: 0x00000441,
                     # steering joints
                     11: 0x00000751,
                     21: 0x00000851,
@@ -37,7 +38,7 @@ eeprom:
                     # 1: 0x00000302,
 
                     # hub mobile_base
-                    2: 0x00000402,
+                    # 2: 0x00000402,
 
                     # # drill module
                     # 17: 0x00000343,
@@ -56,4 +57,19 @@ eeprom:
 
                     # # bimanual hub
                     # 12: 0x00000844,
+
+                    # # straight CONCERT A
+                    # 2: 0x00000441,
+
+                    # # non-structural cube
+                    # 1: 0x00000202,
+
+                    # # to be used for passive link 30 cm
+                    # 3: 0x00000324,
+
+                    # # to be used for passive link 30 cm
+                    # 4: 0x00000424,
+
+                    # # to be used for passive link 30 cm
+                    # 5: 0x00000524,
   }
