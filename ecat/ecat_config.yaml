@@ -5,7 +5,7 @@ ec_board_ctrl :
   #sync_cycle_time_ns: 0
   sync_cycle_offset_ns: 300000000
   sync_point_ns : 650000
-  power_off_boards: false
+  power_off_boards: true
   reset_micro : true
   
 ec_boards_base :
