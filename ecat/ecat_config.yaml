@@ -249,3 +249,10 @@ CentAcESC_301:
   sign: 1
   pos_offset: 23   # [deg] note UNTIL JOINT PROPERLY ZEROED
   max_current_A: *current_max_arm
+
+CentAcESC_302: 
+  aux_pdo: # names defined in SDO index 0x8002 
+    rd :  [ iq_ref_fb, iq_out_fb ]
+  sign: 1
+  pos_offset: 23   # [deg] note UNTIL JOINT PROPERLY ZEROED
+  max_current_A: *current_max_arm
