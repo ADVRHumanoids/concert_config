@@ -44,9 +44,7 @@ def generate_launch_description():
         name='velodyne_convert_node',
         output='screen',
         parameters=[params_convert],
-        remappings=[
-            ('/velodyne_points', '/VLP16_lidar_front/velodyne_points')
-        ]
+        namespace='VLP16_lidar_front',
     )
 
     # Load driver node parameters
@@ -57,9 +55,7 @@ def generate_launch_description():
         name='velodyne_driver_node',
         output='screen',
         parameters=[driver_params_file],
-        remappings=[
-            ('/velodyne_points', '/VLP16_lidar_front/velodyne_points')
-        ]
+        namespace='VLP16_lidar_front',
     )
 
     # Shut down when the convert node exits
