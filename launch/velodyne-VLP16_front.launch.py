@@ -49,12 +49,16 @@ def generate_launch_description():
 
     # Load driver node parameters
     driver_params_file = os.path.join(concert_config_dir, 'config', 'VLP16_front-velodyne_driver_node-params.yaml')
+    with open(driver_params_file, 'r') as f:
+        all_params_driver = yaml.safe_load(f)
+        params_driver = all_params_driver['velodyne_driver_node']['ros__parameters']
+        
     velodyne_driver_node = Node(
         package='velodyne_driver',
         executable='velodyne_driver_node',
         name='velodyne_driver_node',
         output='screen',
-        parameters=[driver_params_file],
+        parameters=[params_driver],
         namespace='VLP16_lidar_front',
     )
 
