@@ -93,97 +93,28 @@ xbotcore_plugins:
                 value: [chain_E]
                 type: vector<string>
             problem_description:
-                value: $PWD/ModularBot_impedance_config.yaml
+                value: $PWD/ModularBot_impedance_config_collaborative_trans.yaml
                 type: file
             solver: {value: AlberoImpedance, type: string}
             enable_feedback: {value: true, type: bool}
             fc_map: {value: {low: 0.80, high: 0.99}, type: map<double>}
             use_payload_estimator:
-              value: false  # note: keep false if you care to live
+              value: true  # note: keep false if you care to live
               type: bool
             payload_estimator_link:
               value: ee_E
               type: string
-            switch_time: 
-                value: 4.0
-                type: double
+            # switch_time: 
+            #     value: 4.0
+            #     type: double
 
-    # gcomp:
-    #     thread: rt_main
-    #     type: gcomp_example
-    #     params:
-    #         enabled_chains: 
-    #             value: [chain_E]
-    #             type: vector<string>
-                
-    # force_follow_me:
-    #     type: force_follow_me
-    #     thread: nrt_main
-    #     params: 
-    #         max_force: { value: 100.0, type: double } #75
-    #         max_lin_velocity:  { value: 1.0, type: double }
-    #         max_ang_velocity:  { value: 1.2, type: double }
-    #         force_threshold: { value: 1.5, type: double } #8.0
-    #         use_safety: {value: true, type: bool }
-    #         sensor_type: {value: 0, type: int} # 0 for sonar 1 for lidar [wip]
-    #         sensors:
-    #             value: [ "ultrasound_rr_lat", "ultrasound_rl_sag", "ultrasound_rl_lat", "ultrasound_fl_lat", "ultrasound_fr_lat", "ultrasound_fr_sag"]  # "ultrasound_rr_sag",
-    #             type: vector<string>
-    #         sensor_threshold:
-    #             value: [0.75, 0.3] # max min threshold  
-    #             type: vector<double>
-    #         # sensor_link_name: {value: "handle_gripping_point_E", type: string }
-    #         sensor_link_name: {value: "ee_E", type: string }
-    #     remap:
-    #       cmd_vel_V6: omnisteering/cmd_vel_V6
-    
-    # force_follow_me_wip(maybe7dof):
-    #     type: force_follow_me
-    #     thread: nrt_main
-    #     params:
-    #         wrench_topic: /force_estimation/base_filtered
-
-    #         max_lin_velocity: 1.0
-    #         max_ang_velocity: 0.70
-
-    #         wrench_to_twist_map: {0: 0, 1: 1 , 5: 5}
-    #         force_to_twist_gains: {0: 0.01, 1: 0.01}   # 0 = lin_vel, 1 = ang_vel
-    #         force_threshold: [5.0, 2.0]  # [lin, ang]
-    #         torque_to_twist_gains: {0: 0.0, 1: 0.02}   # 0 = lin_vel, 1 = ang_vel
-
-    #         enable_error_driver: false
-    #         orientation_local_axis: 2
-    #         task_name: ee_E
-    #         error_vel_gain: 1.0
-    #         error_threshold: 0.1
-
-    #         use_safety: {value: false, type: bool }
-
-    #     remap:
-    #         cmd_vel_V6: omnisteering/cmd_vel_V6
-
-    # force_follow_me:
-    #     type: force_follow_me
-    #     thread: nrt_main
-    #     params:
-    #         wrench_topic: /force_estimation/base_filtered
-
-    #         max_lin_velocity: 1.0
-    #         max_ang_velocity: 0.70
-
-    #         wrench_to_twist_map: {0: 0, 1: 5} # , 5: 5}
-    #         force_to_twist_gains: {0: 0.01, 1: 0.01}   # 0 = lin_vel, 1 = ang_vel
-    #         force_threshold: [8.0, 1.0]  # [lin, ang]
-    #         torque_to_twist_gains: {0: 0.0, 1: 0.02}   # 0 = lin_vel, 1 = ang_vel
-
-    #         enable_error_driver: false
-    #         orientation_local_axis: 2
-    #         task_name: ee_E
-    #         error_vel_gain: 1.0
-    #         error_threshold: 0.1
-
-    #         use_safety: {value: false, type: bool }
-
+    gcomp:
+        thread: rt_main
+        type: gcomp_example
+        params:
+            enabled_chains: 
+                value: [chain_E]
+                type: vector<string>
         remap:
             cmd_vel_V6: omnisteering/cmd_vel_V6
     
@@ -192,12 +123,12 @@ xbotcore_plugins:
       thread: nrt_main
       params:
         twist_limits: 
-          0: 1.1
+          0: 0.9   # 0.9
           1: 0.0
           2: 0.0
           3: 0.0
           4: 0.0
-          5: 1.5
+          5: 1.2   # 1.2
 
         wrench_topic: /force_estimation/base_filtered
 
@@ -237,16 +168,15 @@ xbotcore_plugins:
             name: "ee_E"
             dofs: [0, 1, 2, 3, 4, 5]
             chains:  ["chain_E"]
-            momentum_based: false # was true
-            filter_bandwidth: 5.0 # was 0.5
-            obs_bw: 4.0
+            momentum_based: false
+            filter_bandwidth: 1.0
 
-    zeros:
-        thread: rt_main
-        type: homing
-        params:
-           qhome: {value: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.0,0.0,0.0,0.0,0.0], type: Eigen::VectorXd} # legs(8) + arm(6)
-           time: {value: 10.0, type: double}
+    # zeros:
+    #     thread: rt_main
+    #     type: homing
+    #     params:
+    #        qhome: {value: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.0,0.0,0.0,0.0,0.0], type: Eigen::VectorXd} # legs(8) + arm(6)
+    #        time: {value: 10.0, type: double}
 
 xbotcore_param:
     /xbot/hal/joint_safety/filter_autostart: {value: true, type: bool}

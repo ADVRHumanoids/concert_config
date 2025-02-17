@@ -1,0 +1,145 @@
+XBotInterface:
+    urdf_path: $(rospack find modularbot)/urdf/ModularBot.urdf
+    srdf_path: $(rospack find modularbot)/srdf/ModularBot.srdf
+    joint_map_path: $(rospack find modularbot)/joint_map/ModularBot_joint_map.yaml
+
+ModelInterface:
+    model_type: RBDL
+    is_model_floating_base: true
+
+
+xbotcore_device_configs:
+    sim: $(rospack find modularbot)/config/hal/ModularBot_gz.yaml
+    dummy: $(rospack find modularbot)/config/hal/ModularBot_dummy.yaml
+    ec_imp: $(rospack find modularbot)/config/hal/ModularBot_ec_all.yaml
+    ec_idle: $(rospack find modularbot)/config/hal/ModularBot_ec_all.yaml
+    ec_pos: $(rospack find modularbot)/config/hal/ModularBot_ec_all.yaml
+    ec_hybrid: $(rospack find modularbot)/config/hal/ModularBot_ec_all.yaml
+
+
+xbotcore_threads:
+
+    rt_main:
+        sched: fifo
+        prio: 60
+        period: 0.001
+
+    nrt_main:
+        sched: other
+        prio: 0
+        period: 0.005
+
+    nrt_control:
+        sched: other
+        prio: 0
+        period: 0.005
+
+
+.ctrl_override: &ctrl_override
+  type: map<int>
+  value:
+    J1_A: 0
+    J_wheel_A: 0
+    J1_B: 0
+    J_wheel_B: 0
+    J1_C: 0
+    J_wheel_C: 0
+    J1_D: 0
+    J_wheel_D: 0
+    dagana_E_claw_joint: 0
+
+xbotcore_plugins:
+    
+    ros_io:
+        thread: nrt_main
+        type: ros_io
+    
+    ros_ctrl:
+        thread: nrt_control
+        type: ros_control
+    
+    homing:
+        thread: rt_main
+        type: homing
+        params:
+          ctrl_override: *ctrl_override
+          time:
+            type: double
+            value: 10.0
+
+    ec_ros:
+        thread: nrt_main
+        type: ec_ros
+        params:
+          wkc_stop_threshold: 3
+
+    omnisteering:
+        thread: nrt_main
+        type: omnisteering_controller_plugin
+        params:
+            wheel_names:
+                value: [wheel_A, wheel_B, wheel_C, wheel_D]
+                type: vector<string>
+            wheel_radius:
+                value: [0.16, 0.16, 0.16, 0.16]
+                type: vector<double>
+                
+    cartesio_imp: 
+        thread: rt_main 
+        type: albero_cartesio_rt
+        params:
+            ctrl_override: *ctrl_override
+            enabled_chains: 
+                value: [chain_E]
+                type: vector<string>
+            problem_description:
+                value: $PWD/ModularBot_impedance_config_dlilling.yaml
+                type: file
+            solver: {value: AlberoImpedance, type: string}
+            enable_feedback: {value: true, type: bool}
+            fc_map: {value: {low: 0.80, high: 0.99}, type: map<double>}
+            use_payload_estimator:
+              value: true  # note: keep false if you care to live
+              type: bool
+            payload_estimator_link:
+              value: ee_E
+              type: string
+            # switch_time: 
+            #     value: 4.0
+            #     type: double
+
+    # gcomp:
+    #     thread: rt_main
+    #     type: gcomp_example
+    #     params:
+    #         enabled_chains: 
+    #             value: [chain_E]
+    #             type: vector<string>
+
+    force_estimation:
+        type: force_estimation
+        thread: nrt_main
+        params:
+            name: "ee_E"
+            dofs: [0, 1, 2, 3, 4, 5]
+            chains:  ["chain_E"]
+            momentum_based: false # was true
+            filter_bandwidth: 5.0 # was 0.5
+            obs_bw: 4.0
+
+    zeros:
+        thread: rt_main
+        type: homing
+        params:
+           qhome: {value: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.0,0.0,0.0,0.0,0.0], type: Eigen::VectorXd} # legs(8) + arm(6)
+           time: {value: 10.0, type: double}
+
+xbotcore_param:
+    /xbot/hal/joint_safety/filter_autostart: {value: true, type: bool}
+    /xbot/hal/joint_safety/filter_cutoff_hz: {value: 2.0, type: double}
+    /xbot/trigger_safety_on_shutdown:
+        value: true
+        type: bool
+    /xbot/hal/joint_safety/hack/disable_filter_tuning/dagana_E_claw_joint:
+        value: true
+        type: bool

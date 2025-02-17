@@ -3,30 +3,33 @@
 
 eeprom:
 
-  use_pos: false
+  use_pos: true
   
   # mapping of esc_pos  -> module_params 
   module_params_rid : {
                     # arm joints
-                    51: 0x00000441, 
-                    52: 0x00000641, 
-                    53: 0x00000641, 
-                    54: 0x00000541,
-                    55: 0x00000341, 
-                    56: 0x00000341,
-                    64: 0x00000441,
+                    # 51: 0x00000441, 
+                    # 52: 0x00000641, 
+                    # 53: 0x00000641, 
+                    # 54: 0x00000541,
+                    # 55: 0x00000341, 
+                    # 56: 0x00000341,
+                    # 61: 0x00000641,
+                    # 62: 0x00000441,
+                    # 63: 0x00000641,
+                    # 64: 0x00000441,
                     # steering joints
-                    11: 0x00000751,
-                    21: 0x00000851,
-                    31: 0x00000751,
-                    41: 0x00000851,
+                    # 11: 0x00000751,
+                    # 21: 0x00000851,
+                    # 31: 0x00000751,
+                    # 41: 0x00000851,
                     # wheels
-                    12: 0x00000155,
-                    22: 0x00000155,
-                    32: 0x00000155,
-                    42: 0x00000155,
+                    # 12: 0x00000155,
+                    # 22: 0x00000155,
+                    # 32: 0x00000155,
+                    # 42: 0x00000155,
                     # mobile base powerboard
-                    201: 0x00000302,
+                    # 201: 0x00000302,
                   } 
   
   # mapping of esc_pos -> module_params 
@@ -37,14 +40,14 @@ eeprom:
                     ## powerboard mobile_base
                     # 1: 0x00000302,
 
-                    # hub mobile_base
+                    # # hub mobile_base
                     # 2: 0x00000402,
 
                     # # drill module
                     # 17: 0x00000343,
 
-                    # # dagana
-                    # 17: 0x00000423,
+                    # dagana
+                    # 18: 0x00000423,
 
                     # # 600mm passive base link module
                     # 11: 0x00000146,
@@ -55,21 +58,14 @@ eeprom:
                     # # to be used for passive link 30 cm
                     # 12: 0x00000744,
 
-                    # # bimanual hub
-                    # 12: 0x00000844,
+                    # bimanual hub
+                    # 19: 0x00000844,
 
-                    # # straight CONCERT A
-                    # 2: 0x00000441,
+                    # # spraying module
+                    # 12: 0x00000543,
 
-                    # # non-structural cube
-                    # 1: 0x00000202,
+                    # hub Y module
+                    # 13: 0x00000542,
 
-                    # # to be used for passive link 30 cm
-                    # 3: 0x00000324,
-
-                    # # to be used for passive link 30 cm
-                    # 4: 0x00000424,
-
-                    # # to be used for passive link 30 cm
-                    # 5: 0x00000524,
+                    
   }

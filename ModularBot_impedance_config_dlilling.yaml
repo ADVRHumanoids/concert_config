@@ -1,0 +1,39 @@
+stack:
+    - [EE]
+    - [joint_imp]
+
+EE:
+    type: Interaction
+    base_link: base_link
+    distal_link: ee_E
+    impedance_ref_link: ee_E
+    force_max:
+        - 100000.0
+        - 100000.0
+        - 100000.0
+        - 10000.0
+        - 10000.0
+        - 10000.0
+    stiffness:
+        - 10000.0
+        - 10000.0
+        - 10000.0
+        - 2000.0
+        - 2000.0
+        - 2000.0
+    damping:
+        - 0.7
+        - 0.7
+        - 0.7
+        - 0.7
+        - 0.7
+        - 0.7
+    indices: [0, 1, 2, 3, 4, 5]
+
+joint_imp:
+    type: JointImpedance
+    lib_name: libCartesianInterfaceSolverAlberoImpedance.so
+    stiffness: 20.0  # 20.0 - 0.0
+    damping: 80.0    # 80.0
+    # disabled_joints: [J7_E]
+    chains: [chain_E]
