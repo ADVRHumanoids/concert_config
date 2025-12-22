@@ -8,7 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY launch config hal gui ecat joint_config xbot2
+install(DIRECTORY launch hal gui ecat joint_config xbot2
   DESTINATION share/${PROJECT_NAME}/
 )
 
