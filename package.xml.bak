@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>concert_config</name>
+  <version>0.0.1</version>
+  <description>Concert robot configuration for real robot operation with XBot2</description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

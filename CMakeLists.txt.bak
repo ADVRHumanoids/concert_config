@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(concert_config)
+find_package(catkin REQUIRED)
+catkin_package()
+
+# Install all YAMLs that live in this folder
+install(DIRECTORY .
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  FILES_MATCHING PATTERN "*.yaml"
+)
+
+# Install subdirs used at runtime
+install(DIRECTORY gui hal ecat joint_config joint_map xbot2 config launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
