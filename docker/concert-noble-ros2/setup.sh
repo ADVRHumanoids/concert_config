@@ -1,12 +1,28 @@
-#!/bin/bash
-# Setup script for concert-noble-ros2 docker container
+ros2(){
+    local target script_dir env_file
+    target="$1"
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+    if [ -z "$target" ]
+    then
+        echo "No argument supplied" >&2
+        return 1
+    fi
 
-# Source the main setup
-if [ -f "$SCRIPT_DIR/../../setup.sh" ]; then
-    source "$SCRIPT_DIR/../../setup.sh"
-fi
+    script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+    env_file="$script_dir/../concert-config_ros2.env"
 
-# Container-specific environment
-export CONCERT_DOCKER_ENV="concert-noble-ros2"
+    if [ ! -f "$env_file" ]; then
+        echo "Concert docker environment file not found: $env_file" >&2
+        return 1
+    fi
+
+    # shellcheck disable=SC1091
+    source "$env_file"
+    export CONCERT_ACTIVE_DOCKER_ENV=ros2
+
+    cd "$script_dir" || return 1
+    xhost +local:root
+    echo "Running docker image from $PWD..."
+    docker compose up "$target" -d --no-recreate
+    docker compose exec "$target" bash
+}
