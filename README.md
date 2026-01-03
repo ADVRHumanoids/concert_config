@@ -434,25 +434,48 @@ source ~/.bashrc
 
 # 3. Launch simulation (with xbot2 and GUI server included)
 ros2 launch concert_gazebo modular.launch.py
-
-# 4. Open GUI in browser
-# Navigate to http://localhost:8080
 ```
+
+**Step 4: Download and Launch GUI Client (on host machine, outside container)**
+
+The GUI client is a desktop application that runs on your host machine and connects to the GUI server running inside the container.
+
+**Download the GUI Client:**
+1. Go to the [robot_monitoring releases page](https://github.com/ADVRHumanoids/robot_monitoring/releases)
+2. Download the latest **XBot2 GUI Client** release for Ubuntu (e.g., `xbot2_gui_client_x86_64.tar.gz`)
+3. Extract it to your home directory:
+
+```bash
+cd ~
+tar -xzf xbot2_gui_client_x86_64.tar.gz
+```
+
+**Launch the GUI Client:**
+
+```bash
+# Open a NEW terminal on the host (not inside the container)
+cd ~/xbot2_gui_client_x86_64/bin
+./xbot2_gui
+```
+
+When the GUI opens, configure the server address:
+- **Server IP**: `localhost` (or `127.0.0.1` for local simulation)
+- **Port**: `8080` (default)
+
+> **Note**: For detailed GUI documentation, see [robot_monitoring](https://github.com/ADVRHumanoids/robot_monitoring/tree/2.0-master)
 
 **Alternative: Run GUI server separately** (for debugging or custom configuration):
 
 ```bash
 # 1. Launch simulation WITHOUT xbot2_gui_server
-# First, comment out xbot2_gui_server in modular.launch.py:
-#   - Comment: xbot2_gui_server = ExecuteProcess(...)
-#   - Comment: xbot2_gui_server in LaunchDescription return list
-
 ros2 launch concert_gazebo modular.launch.py xbot2_gui:=false
 
-# 2. In a separate terminal, start GUI server manually
+# 2. In a separate terminal inside the container, start GUI server manually
 xbot2_gui_server ~/xbot2_ws/src/iit-concert-ros-pkg/concert_config/gui/ros2/gui_server_config.yaml
 
-# 3. Use the GUI (http://localhost:8080) to start/stop xbot2
+# 3. On host machine, launch the GUI client
+cd ~/xbot2_gui_client_x86_64/bin
+./xbot2_gui
 ```
 
 ### Real Robot Workflow
