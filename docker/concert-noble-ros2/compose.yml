@@ -23,7 +23,7 @@ services:
     extends: base
     volumes:
       - ~/.cache/concert-noble-ros2-dev:/home/user/data
-      - xbot2_src:/home/user/xbot2_ws/src # Named volume - Docker manages permissions
+      - ~/xbot2_ws_shared:/home/user/xbot2_ws/src # Bidirectional: host <-> container
     environment:
       - CUSTOM_PS="(dev) "
   sim:
@@ -38,6 +38,3 @@ services:
     restart: always
     environment:
       - CUSTOM_PS="(xbot2_gui_server) "
-
-volumes:
-  xbot2_src: # Named volume for persistent source code

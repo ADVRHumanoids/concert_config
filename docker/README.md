@@ -84,3 +84,34 @@ Edit the environment files to customize:
 - `ROBOT_PACKAGES` - Packages to install
 - `RECIPES_TAG` - Forest recipes branch
 - `TAGNAME` - Image version tag
+
+## Persistent Source Sharing (Bidirectional Host ↔ Container)
+
+To make changes to source code persist across container restarts and be editable from your host:
+
+### Step 1: Extract files (one-time, run on HOST)
+
+```bash
+mkdir -p ~/xbot2_ws_shared
+
+docker run --rm \
+  -v ~/xbot2_ws_shared:/backup \
+  hhcmhub/concert-noble-ros2-base:latest \
+  bash -c "cp -r /home/user/xbot2_ws/src/* /backup/ && chown -R $(id -u):$(id -g) /backup/"
+```
+
+### Step 2: Clean up old containers
+
+```bash
+cd ~/concert_config_pattern/concert_config/docker/concert-noble-ros2
+docker compose down --remove-orphans
+```
+
+### Step 3: Start normally (your usual workflow)
+
+```bash
+source setup.sh
+ros2 dev
+```
+
+Now files in `~/xbot2_ws_shared/` on your host are shared bidirectionally with `/home/user/xbot2_ws/src/` in the container.
