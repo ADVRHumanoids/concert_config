@@ -14,6 +14,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw # x11
       - ~/.ssh:/home/user/.ssh # ssh
+      - ~/concert/image:/home/user/image
     environment:
       - TERM=xterm-256color
       - DISPLAY
@@ -24,6 +25,7 @@ services:
     volumes:
       - ~/.cache/concert-noble-ros2-dev:/home/user/data
       - ~/xbot2_ws_shared:/home/user/xbot2_ws/src # Bidirectional: host <-> container
+      - ~/concert/image:/home/user/image
     environment:
       - CUSTOM_PS="(dev) "
   sim:
@@ -31,6 +33,7 @@ services:
     image: hhcmhub/concert-noble-ros2-sim:latest
     volumes:
       - ~/.cache/concert-noble-ros2-sim:/home/user/data
+      - ~/concert/image:/home/user/image
 
   xbot2_gui_server:
     extends: base
