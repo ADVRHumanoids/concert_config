@@ -94,11 +94,18 @@ To make changes to source code persist across container restarts and be editable
 ```bash
 mkdir -p ~/xbot2_ws_shared
 
-# Run as root to bypass permission issues
+# Copy files from container (run as root to bypass permission issues)
 docker run --rm --user root \
   -v ~/xbot2_ws_shared:/backup \
   hhcmhub/concert-noble-ros2-base:latest \
-  bash -c "cp -r /home/user/xbot2_ws/src/* /backup/ && chown -R $(id -u):$(id -g) /backup/"
+  bash -c "cp -r /home/user/xbot2_ws/src/* /backup/"
+
+# Fix ownership to your user
+sudo chown -R $(id -u):$(id -g) ~/xbot2_ws_shared
+
+# Grant container user (UID 1000) access via ACL
+sudo setfacl -R -m u:1000:rwx ~/xbot2_ws_shared
+sudo setfacl -R -d -m u:1000:rwx ~/xbot2_ws_shared  # Default for new files
 ```
 
 ### Step 2: Clean up old containers
@@ -116,3 +123,5 @@ ros2 dev
 ```
 
 Now files in `~/xbot2_ws_shared/` on your host are shared bidirectionally with `/home/user/xbot2_ws/src/` in the container.
+
+**Note:** The ACL grants both your host user and the container's user (UID 1000) read/write access.
