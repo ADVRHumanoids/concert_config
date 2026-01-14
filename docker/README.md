@@ -94,7 +94,8 @@ To make changes to source code persist across container restarts and be editable
 ```bash
 mkdir -p ~/xbot2_ws_shared
 
-docker run --rm \
+# Run as root to bypass permission issues
+docker run --rm --user root \
   -v ~/xbot2_ws_shared:/backup \
   hhcmhub/concert-noble-ros2-base:latest \
   bash -c "cp -r /home/user/xbot2_ws/src/* /backup/ && chown -R $(id -u):$(id -g) /backup/"
