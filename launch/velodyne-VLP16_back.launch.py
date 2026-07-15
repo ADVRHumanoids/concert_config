@@ -40,7 +40,7 @@ def generate_launch_description():
     # Velodyne convert node
     velodyne_convert_node = Node(
         package='velodyne_pointcloud',
-        executable='velodyne_convert_node',
+        executable='velodyne_transform_node',
         name='velodyne_convert_node',
         output='screen',
         parameters=[params_convert],

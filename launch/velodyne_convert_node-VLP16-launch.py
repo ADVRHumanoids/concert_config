@@ -49,7 +49,7 @@ def generate_launch_description():
     params['max_range'] = 130.0
     params['calibration'] = os.path.join(share_dir, 'params', 'VLP16db.yaml')
     velodyne_convert_node = launch_ros.actions.Node(package='velodyne_pointcloud',
-                                                      executable='velodyne_convert_node',
+                                                      executable='velodyne_transform_node',
                                                       output='both',
                                                       parameters=[params])
 
