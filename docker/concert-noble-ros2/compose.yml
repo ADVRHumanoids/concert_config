@@ -1,0 +1,173 @@
+services:
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_IP: ${ROS_IP}
+    stdin_open: true
+    tty: true
+    privileged: true
+    entrypoint: /bin/bash
+    network_mode: host
+    cap_add:
+      - ALL
+    restart: no
+    ulimits:
+      core: -1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # x11
+      - ~/.ssh:/home/user/.ssh  # ssh
+        # Mount the concert_config repository root into the container
+      - ../../:/home/user/xbot2_ws/src/concert_config:ro
+      - /dev:/dev
+    environment:
+      - TERM=xterm-256color
+      - DISPLAY
+      - HHCM_FOREST_CLONE_DEFAULT_PROTO=https
+      - ZENOH_CONFIG_OVERRIDE
+      - CONFIG_PATH_DOCKER
+
+  dev:
+    extends: base
+    restart: always
+    volumes:
+      - ~/.cache/concert-noble-ros2-dev:/home/user/data
+    environment:
+      - CUSTOM_PS=(dev)
+
+  # Intel VAAPI development environment. RENDER_GID is the host-side group
+  # of /dev/dri/renderD128; `concert dev-intel-va` sets it automatically.
+  dev-intel-va:
+    extends: dev
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "${RENDER_GID}"  # set to render group id
+    environment:
+      - CUSTOM_PS=(dev-intel-va)
+      - LIBVA_DRIVER_NAME=iHD
+
+
+  dev-nvidia:
+    extends: dev
+    restart: always
+    volumes:
+      - ~:/home/user/host
+    environment:
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: 1
+
+
+  xbot2_gui_server:
+    extends: base
+    entrypoint: bash -ic "cd ~/xbot2_ws/src/concert_config; xbot2_gui_server gui/gui_server_config.yaml; bash"
+    restart: always
+    environment:
+      - CUSTOM_PS=(xbot2_gui_server)
+    labels:
+      vector.collect: "true"
+
+  zenoh_bridge_client:
+    image: eclipse/zenoh-bridge-ros2dds:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ../../:/etc/concert_config:ro
+    environment:
+      - ROS_DISTRO=jazzy
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID
+      - ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
+    command: "-e tcp/10.0.0.1:7447"
+
+  zenoh_bridge_server:
+    environment:
+      - CYCLONEDDS_URI=file:///etc/concert_config/network/cyclone/cyclonedds-control.xml
+      - ROS_DISTRO=jazzy
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    image: eclipse/zenoh-bridge-ros2dds:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ../../:/etc/concert_config:ro
+    command: "-l tcp/10.0.0.1:7447 --rest-http-port 8000"
+
+  influxdb:
+    image: influxdb:2.7
+    restart: unless-stopped
+    ports:
+      - "${INFLUXDB_PORT:-8086}:8086"
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USERNAME:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD:-xbot2-diagnostics-dev-password}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG:-xbot2}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET:-diagnostics}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN:-xbot2-diagnostics-dev-token}
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+
+  grafana:
+    image: grafana/grafana:13.1
+    container_name: xbot2-diagnostics-grafana
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      INFLUXDB_ORG: ${INFLUXDB_ORG:-xbot2}
+      INFLUXDB_BUCKET: ${INFLUXDB_BUCKET:-diagnostics}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN:-xbot2-diagnostics-dev-token}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+
+  diagnostics_aggregator:
+    extends: base
+    restart: always
+    entrypoint: bash -ic 'python3 -m pyxbot2_diagnostics.aggregator.aggregator_node --config /etc/concert_config/diagnostics/aggregator.yaml'
+    volumes:
+      - ../..:/etc/concert_config:ro
+
+  victorialogs:
+    image: victoriametrics/victoria-logs
+    restart: unless-stopped
+    command:
+      - -storageDataPath=/victoria-logs-data
+    volumes:
+      - victorialogs-data:/victoria-logs-data
+    ports:
+      - "9428:9428"
+
+  vector:
+    image: timberio/vector:0.57.0-debian
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      - victorialogs
+    command: [--config, /etc/vector/vector.yaml]
+    volumes:
+      - ../../diagnostics/vector.yaml:/etc/vector/vector.yaml:ro
+      - /var/log/concert_launcher:/log:ro
+      - vector-data:/var/lib/vector
+
+
+volumes:
+  influxdb-data:
+  influxdb-config:
+  grafana-data:
+  vector-data:
+  victorialogs-data:

@@ -1,0 +1,67 @@
+services:
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_IP: ${ROS_IP}
+    stdin_open: true
+    tty: true
+    privileged: true
+    entrypoint: /bin/bash
+    network_mode: host
+    cap_add:
+      - ALL
+    restart: no
+    ulimits:
+      core: -1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # x11
+      - ~/.ssh:/home/user/.ssh  # ssh
+      - ../../:/home/user/xbot2_ws/src/concert_config:ro
+    environment:
+      - TERM=xterm-256color
+      - DISPLAY
+      - HHCM_FOREST_CLONE_DEFAULT_PROTO=https
+      - CONFIG_PATH_DOCKER
+
+  dev:
+    extends: base
+    restart: always
+    cap_add:
+      - ALL
+    volumes:
+      - /dev:/dev
+      - /usr/lib/modules:/usr/lib/modules
+      - ~/.cache/concert-noble-ros2-dev:/home/user/data
+    environment:
+      - CUSTOM_PS=(dev)
+
+  exp:
+    extends: dev
+    volumes:
+      - ~/.cache/concert-noble-ros2-exp:/home/user/data
+
+  xbot2_gui_server:
+    extends: base
+    entrypoint: bash -ic "cd ~/xbot2_ws/src/concert_config; xbot2_gui_server gui/gui_server_config.yaml; bash"
+    restart: always
+    environment:
+      - CUSTOM_PS=(xbot2_gui_server)
+
+  vector:
+    image: timberio/vector:0.57.0-debian
+    restart: unless-stopped
+    network_mode: host
+    command: [--config, /etc/vector/vector.yaml]
+    volumes:
+      - ../../diagnostics/vector.yaml:/etc/vector/vector.yaml:ro
+      - /var/log/concert_launcher:/log:ro
+      - vector-data:/var/lib/vector
+
+
+volumes:
+  vector-data:
+
+
+
