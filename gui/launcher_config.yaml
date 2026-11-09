@@ -1,15 +1,15 @@
 context:
-  session: control
+  session: concert
   params:
     hw_type: ec_pos
   .defines:
     - &embedded embedded@10.24.15.100
-    - &control control@10.24.15.102
-    - &vision control@10.24.15.101
+    - &control concert@10.24.15.102
+    - &vision concert@10.24.15.101
 
-    - &docker-xeno  control-noble-ros2-xeno-exp-1
-    - &docker-base  control-noble-ros2-dev-1
-    - &docker-jetpack control-noble-ros2-jetpack-dev-1
+    - &docker-xeno  concert-noble-ros2-xeno-exp-1
+    - &docker-base  concert-noble-ros2-dev-1
+    - &docker-jetpack concert-noble-ros2-jetpack-dev-1
 
 ecat:
   cmd: ecat_master
@@ -45,13 +45,29 @@ xbot2:
 front_lidar:
   machine: *control
   docker: *docker-base
-  cmd: ros2 launch concert_config velodyne-VLP16_front.launch.py
+  # one pipeline: Ctrl-C reaches both nodes; driver stdout to stderr, so the pipe stays empty
+  cmd: >-
+    ros2 run velodyne_driver velodyne_driver_node
+    --ros-args -r __ns:=/VLP16_lidar_front
+    --params-file /home/user/xbot2_ws/src/concert_config/ouster/velodyne_vlp16_front.yaml
+    1>&2 |
+    ros2 run velodyne_pointcloud velodyne_transform_node
+    --ros-args -r __ns:=/VLP16_lidar_front
+    --params-file /home/user/xbot2_ws/src/concert_config/ouster/velodyne_vlp16_front.yaml
   ready_check: timeout 3 ros2 topic echo --once /VLP16_lidar_front/velodyne_points
   show_ui: false
 
 back_lidar:
   machine: *control
   docker: *docker-base
-  cmd: ros2 launch concert_config velodyne-VLP16_back.launch.py
+  # one pipeline: Ctrl-C reaches both nodes; driver stdout to stderr, so the pipe stays empty
+  cmd: >-
+    ros2 run velodyne_driver velodyne_driver_node
+    --ros-args -r __ns:=/VLP16_lidar_back
+    --params-file /home/user/xbot2_ws/src/concert_config/ouster/velodyne_vlp16_back.yaml
+    1>&2 |
+    ros2 run velodyne_pointcloud velodyne_transform_node
+    --ros-args -r __ns:=/VLP16_lidar_back
+    --params-file /home/user/xbot2_ws/src/concert_config/ouster/velodyne_vlp16_back.yaml
   ready_check: timeout 3 ros2 topic echo --once /VLP16_lidar_back/velodyne_points
   show_ui: false
