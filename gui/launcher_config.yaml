@@ -1,0 +1,57 @@
+context:
+  session: control
+  params:
+    hw_type: ec_pos
+  .defines:
+    - &embedded embedded@10.24.15.100
+    - &control control@10.24.15.102
+    - &vision control@10.24.15.101
+
+    - &docker-xeno  control-noble-ros2-xeno-exp-1
+    - &docker-base  control-noble-ros2-dev-1
+    - &docker-jetpack control-noble-ros2-jetpack-dev-1
+
+ecat:
+  cmd: ecat_master
+  machine: *embedded
+  docker: *docker-xeno
+
+xbot2:
+  cmd: xbot2-core --hw {hw_type}
+  machine: *embedded
+  ready_check: timeout 5 ros2 topic echo /xbotcore/joint_states --once
+  docker: *docker-xeno
+  depends: [imu]
+  variants:
+    verbose:
+      cmd: "{cmd} -V"
+    hw_type:
+      - impedance:
+          params:
+            hw_type: ec_imp
+      - idle:
+          params:
+            hw_type: ec_idle
+      - position:
+          params:
+            hw_type: ec_pos
+      - base_only:
+          params:
+            hw_type: ec_hybrid
+      - dummy:
+          params:
+            hw_type: dummy
+
+front_lidar:
+  machine: *control
+  docker: *docker-base
+  cmd: ros2 launch concert_config velodyne-VLP16_front.launch.py
+  ready_check: timeout 3 ros2 topic echo --once /VLP16_lidar_front/velodyne_points
+  show_ui: false
+
+back_lidar:
+  machine: *control
+  docker: *docker-base
+  cmd: ros2 launch concert_config velodyne-VLP16_back.launch.py
+  ready_check: timeout 3 ros2 topic echo --once /VLP16_lidar_back/velodyne_points
+  show_ui: false

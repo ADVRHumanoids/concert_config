@@ -1,0 +1,11 @@
+launcher:
+  launcher_config: launcher_config.yaml
+
+ecat:
+  uri: 10.24.15.100:5555
+
+cartesian:
+  cmd_vel_topics:
+    - /omnisteering/cmd_vel
+    - ZMQ
+  zmq_pub_remote: tcp://10.24.15.102:5051
