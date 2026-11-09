@@ -21,7 +21,6 @@ xbot2:
   machine: *embedded
   ready_check: timeout 5 ros2 topic echo /xbotcore/joint_states --once
   docker: *docker-xeno
-  depends: [imu]
   variants:
     verbose:
       cmd: "{cmd} -V"
