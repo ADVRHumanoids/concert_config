@@ -1,7 +1,8 @@
 # WireGuard Setup
 
-Remote access VPN into the Kyon 03 LAN (`10.24.15.0/24`).  
-The WireGuard **server** runs on `kyon-control` (`10.24.15.102`), reachable from the WAN on UDP port `51820`.
+Remote access VPN into the concert LAN (`10.24.15.0/24`).  
+The WireGuard **server** runs on the control PC (`10.24.15.102`), reachable from the WAN on UDP port `51820`
+through the router `concert-robot` (hostname TBD, see `ROUTER_HOST` in `connect-wg.bash`).
 
 Peer model:
 - **Pilot PC** — static peer, always in `wg0.conf`
@@ -19,7 +20,7 @@ sudo apt update && sudo apt install -y wireguard
 
 ## 2 · Generate server keypair
 
-Run on **kyon-control**:
+Run on the **control PC**:
 
 ```bash
 wg genkey | sudo tee /etc/wireguard/server.key | wg pubkey | sudo tee /etc/wireguard/server.pub
@@ -38,7 +39,7 @@ First, find the LAN interface name:
 ip -br link   # typically eno1, enp3s0, etc.
 ```
 
-Create `/etc/wireguard/wg0.conf` on **kyon-control**:
+Create `/etc/wireguard/wg0.conf` on the **control PC** (template: `wg0.conf`):
 
 ```ini
 [Interface]
@@ -85,7 +86,7 @@ wg genkey | tee ~/pilot.key | wg pubkey | tee ~/pilot.pub
 
 Hand `~/pilot.pub` to whoever manages `wg0.conf` to fill in the static peer block above.
 
-Create `~/wg-kyon.conf` on the **pilot PC**:
+Create `~/wg-concert.conf` on the **pilot PC**:
 
 ```ini
 [Interface]
@@ -93,14 +94,14 @@ Address    = 10.0.0.2/24
 PrivateKey = <contents of ~/pilot.key>
 
 [Peer]
-PublicKey           = <contents of /etc/wireguard/server.pub on kyon-control>
-Endpoint            = <kyon-control public IP>:51820
+PublicKey           = <contents of /etc/wireguard/server.pub on the control PC>
+Endpoint            = <concert-robot router hostname or public IP>:51820
 AllowedIPs          = 10.0.0.0/24, 10.24.15.0/24
 PersistentKeepalive = 25
 ```
 
 ```bash
-sudo wg-quick up ~/wg-kyon.conf
+sudo wg-quick up ~/wg-concert.conf
 ```
 
 ---
@@ -110,7 +111,7 @@ sudo wg-quick up ~/wg-kyon.conf
 Use `wg set` to register a peer at runtime without editing any config file.  
 The peer is **removed automatically** when the tunnel is restarted or the machine reboots.
 
-### Add a dynamic peer (run on kyon-control)
+### Add a dynamic peer (run on the control PC)
 
 ```bash
 sudo wg set wg0 peer <CLIENT_PUBKEY> allowed-ips 10.0.0.<N>/32
@@ -130,8 +131,8 @@ Address    = 10.0.0.<N>/24
 PrivateKey = <client private key>
 
 [Peer]
-PublicKey           = <contents of /etc/wireguard/server.pub on kyon-control>
-Endpoint            = <kyon-control public IP>:51820
+PublicKey           = <contents of /etc/wireguard/server.pub on the control PC>
+Endpoint            = <concert-robot router hostname or public IP>:51820
 AllowedIPs          = 10.0.0.0/24, 10.24.15.0/24
 PersistentKeepalive = 25
 ```
@@ -141,7 +142,7 @@ PersistentKeepalive = 25
 ## 7 · Dynamic peers via `connect-wg.bash`
 
 `connect-wg.bash` automates the dynamic peer workflow (section 6) for any client machine.  
-It SSHs into `kyon-control`, picks the next free VPN address (`10.0.0.10–254`), registers the peer, writes a temporary tunnel config to `/tmp/wg-kyon.conf`, and brings up the tunnel — all in one step.
+It SSHs into the control PC (through the router, port 22), picks the next free VPN address (`10.0.0.10–254`), registers the peer, writes a temporary tunnel config to `/tmp/wg-concert.conf`, and brings up the tunnel — all in one step.
 
 ### Prerequisites
 
@@ -151,7 +152,7 @@ Install the required tools on the **client**:
 sudo apt install -y wireguard sshpass
 ```
 
-SSH access to `kyon@kyon03-robot` must be reachable from the client (either on the LAN or via a jump host).
+SSH access to `concert@concert-robot` must be reachable from the client (either on the LAN or via a jump host).
 
 ### Connect
 
@@ -159,15 +160,15 @@ SSH access to `kyon@kyon03-robot` must be reachable from the client (either on t
 ./connect-wg.bash
 ```
 
-You will be prompted for the password of `kyon@kyon03-robot`.  
-On first run the script generates a keypair under `~/.wireguard/` (`kyon.key` / `kyon.pub`).  
+You will be prompted for the password of `concert@concert-robot`.  
+On first run the script generates a keypair under `~/.wireguard/` (`concert.key` / `concert.pub`).  
 After connecting it prints the assigned VPN IP and reachable hosts:
 
 ```
 Connected as 10.0.0.10
-  kyon-control   10.24.15.102  (10.0.0.1)
-  amax-kyon-iit  10.24.15.100
-  ed-power-board 10.24.15.200
+  control   10.24.15.102  (10.0.0.1)
+  embedded  10.24.15.100
+  vision    10.24.15.101
 ```
 
 ### Disconnect
@@ -185,10 +186,10 @@ The peer is also cleared automatically on server reboot or tunnel restart.
 
 ```bash
 # from any client
-ping 10.0.0.1        # kyon-control VPN address
-ping 10.24.15.102    # kyon-control LAN
-ping 10.24.15.100    # amax-kyon-iit
-ping 10.24.15.200    # ed-power-board
+ping 10.0.0.1        # control PC VPN address
+ping 10.24.15.102    # control PC LAN
+ping 10.24.15.100    # embedded PC
+ping 10.24.15.101    # vision PC
 
 # on the server — show active tunnels and last handshake times
 sudo wg show
@@ -200,8 +201,8 @@ sudo wg show
 
 | Host           | LAN IP        | VPN IP    | Peer type |
 |----------------|---------------|-----------|-----------|
-| kyon-control   | 10.24.15.102  | 10.0.0.1  | server    |
+| control        | 10.24.15.102  | 10.0.0.1  | server    |
 | pilot-pc       | —             | 10.0.0.2  | static    |
-| amax-kyon-iit  | 10.24.15.100  | —         | —         |
-| ed-power-board | 10.24.15.200  | —         | —         |
+| embedded       | 10.24.15.100  | —         | —         |
+| vision         | 10.24.15.101  | —         | —         |
 | *dynamic-N*    | —             | 10.0.0.N  | dynamic   |

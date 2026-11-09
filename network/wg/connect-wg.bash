@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# connect-wg.bash — register this machine as a dynamic WireGuard peer on kyon-control
+# connect-wg.bash — register this machine as a dynamic WireGuard peer on the concert control PC
 # Usage:
 #   ./connect-wg.bash          # connect
 #   ./connect-wg.bash down     # disconnect
 
 set -euo pipefail
 
-SERVER_SSH="kyon@kyon03-robot"
+ROUTER_HOST="concert-robot"  # TBD: concert router hostname, as reachable from the client
+SERVER_SSH="concert@${ROUTER_HOST}"
 SERVER_WG_IFACE="wg0"
 SERVER_WG_ADDR="10.0.0.1"
 SERVER_WG_PORT="51820"
 VPN_SUBNET="10.0.0"
 KEY_DIR="$HOME/.wireguard"
-CONF_FILE="/tmp/wg-kyon.conf"
+CONF_FILE="/tmp/wg-concert.conf"
 
 # ── Guards ────────────────────────────────────────────────────────────────────
 for cmd in wg wg-quick ssh sshpass; do
@@ -26,7 +27,7 @@ SUDO_PASS="$REMOTE_PASS"
 
 # ── Disconnect ────────────────────────────────────────────────────────────────
 if [[ -f "$CONF_FILE" ]]; then
-    LOCAL_PUBKEY=$(wg pubkey < "$KEY_DIR/kyon.key")
+    LOCAL_PUBKEY=$(wg pubkey < "$KEY_DIR/concert.key")
     echo "Removing peer from server..."
     echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "$SERVER_SSH" "sudo -S -p '' wg set $SERVER_WG_IFACE peer $LOCAL_PUBKEY remove" || true
     sudo wg-quick down "$CONF_FILE"
@@ -41,14 +42,14 @@ fi
 # ── Keypair ───────────────────────────────────────────────────────────────────
 mkdir -p "$KEY_DIR"
 chmod 700 "$KEY_DIR"
-if [[ ! -f "$KEY_DIR/kyon.key" ]]; then
+if [[ ! -f "$KEY_DIR/concert.key" ]]; then
     echo "Generating WireGuard keypair in $KEY_DIR ..."
-    wg genkey | tee "$KEY_DIR/kyon.key" | wg pubkey > "$KEY_DIR/kyon.pub"
-    chmod 600 "$KEY_DIR/kyon.key"
-    echo "  Public key: $(cat "$KEY_DIR/kyon.pub")"
+    wg genkey | tee "$KEY_DIR/concert.key" | wg pubkey > "$KEY_DIR/concert.pub"
+    chmod 600 "$KEY_DIR/concert.key"
+    echo "  Public key: $(cat "$KEY_DIR/concert.pub")"
 fi
-LOCAL_PRIVKEY=$(cat "$KEY_DIR/kyon.key")
-LOCAL_PUBKEY=$(cat "$KEY_DIR/kyon.pub")
+LOCAL_PRIVKEY=$(cat "$KEY_DIR/concert.key")
+LOCAL_PUBKEY=$(cat "$KEY_DIR/concert.pub")
 
 # ── Fetch server public key ───────────────────────────────────────────────────
 # server.pub is world-readable (chmod 644) — no sudo needed.
@@ -85,7 +86,7 @@ PrivateKey = ${LOCAL_PRIVKEY}
 
 [Peer]
 PublicKey           = ${SERVER_PUBKEY}
-Endpoint            = kyon03-robot:${SERVER_WG_PORT}
+Endpoint            = ${ROUTER_HOST}:${SERVER_WG_PORT}
 AllowedIPs          = 10.0.0.0/24, 10.24.15.0/24
 PersistentKeepalive = 25
 EOF
@@ -96,8 +97,8 @@ sudo wg-quick up "$CONF_FILE"
 
 echo ""
 echo "Connected as $VPN_IP"
-echo "  kyon-control   10.24.15.102  (${VPN_SUBNET}.1)"
-echo "  amax-kyon-iit  10.24.15.100"
-echo "  ed-power-board 10.24.15.200"
+echo "  control   10.24.15.102  (${VPN_SUBNET}.1)"
+echo "  embedded  10.24.15.100"
+echo "  vision    10.24.15.101"
 echo ""
 echo "To disconnect:  $0 down"
