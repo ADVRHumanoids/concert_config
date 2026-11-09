@@ -14,6 +14,7 @@ xbotcore_device_configs:
     ec_imp: $(ros2 pkg prefix --share modularbot)/config/hal/ModularBot_ec_all.yaml
     ec_idle: $(ros2 pkg prefix --share modularbot)/config/hal/ModularBot_ec_all.yaml
     ec_pos: $(ros2 pkg prefix --share modularbot)/config/hal/ModularBot_ec_all.yaml
+    ec_hybrid: $(ros2 pkg prefix --share modularbot)/config/hal/ModularBot_ec_all.yaml
 
 # threads
 xbotcore_threads:
