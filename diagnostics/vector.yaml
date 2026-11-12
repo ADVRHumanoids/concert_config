@@ -200,7 +200,7 @@ sinks:
       - process_logs
 
     endpoints:
-      - http://10.24.15.102:9428/insert/elasticsearch/
+      - http://10.24.10.102:9428/insert/elasticsearch/
 
     api_version: v8
     compression: gzip

@@ -14,7 +14,7 @@
         <!-- Robot/server LAN interface for direct cross-host DDS (domain 0). Multicast OFF on
              the LAN: cross-host discovery uses the unicast <Peers> below, so the switch does
              not need to forward multicast. Local discovery still uses multicast on lo above. -->
-        <NetworkInterface name="eno1" address="10.24.15.101" priority="100" multicast="false"/>
+        <NetworkInterface name="eno1" address="10.24.10.101" priority="100" multicast="false"/>
       </Interfaces>
 
       <!-- Multicast ON: required for intra-host (loopback) discovery so the local load_node
@@ -37,9 +37,9 @@
         <!-- <Peer Address="10.0.0.10"/> -->
 
         <!-- Robot LAN machines + Loopback -->
-        <Peer Address="10.24.15.100"/>
-        <Peer Address="10.24.15.101"/>
-        <Peer Address="10.24.15.102"/>
+        <Peer Address="10.24.10.100"/>
+        <Peer Address="10.24.10.101"/>
+        <Peer Address="10.24.10.102"/>
       </Peers>
     </Discovery>
 

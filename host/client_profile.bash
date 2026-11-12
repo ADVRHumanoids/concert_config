@@ -1,9 +1,9 @@
 _CONCERT_CLIENT_PROFILE_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # ssh aliases
-alias ssh_embedded='ssh embedded@10.24.15.100'
-alias ssh_control='ssh concert@10.24.15.102'
-alias ssh_vision='ssh concert@10.24.15.101'
+alias ssh_embedded='ssh embedded@10.24.10.100'
+alias ssh_control='ssh concert@10.24.10.102'
+alias ssh_vision='ssh concert@10.24.10.101'
 
 # enable ros2 alias to login into docker container
 source $_CONCERT_CLIENT_PROFILE_SCRIPT_DIR/../docker/concert-noble-ros2/setup.sh

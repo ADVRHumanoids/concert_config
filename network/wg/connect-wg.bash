@@ -87,7 +87,7 @@ PrivateKey = ${LOCAL_PRIVKEY}
 [Peer]
 PublicKey           = ${SERVER_PUBKEY}
 Endpoint            = ${ROUTER_HOST}:${SERVER_WG_PORT}
-AllowedIPs          = 10.0.0.0/24, 10.24.15.0/24
+AllowedIPs          = 10.0.0.0/24, 10.24.10.0/24
 PersistentKeepalive = 25
 EOF
 chmod 600 "$CONF_FILE"
@@ -97,8 +97,8 @@ sudo wg-quick up "$CONF_FILE"
 
 echo ""
 echo "Connected as $VPN_IP"
-echo "  control   10.24.15.102  (${VPN_SUBNET}.1)"
-echo "  embedded  10.24.15.100"
-echo "  vision    10.24.15.101"
+echo "  control   10.24.10.102  (${VPN_SUBNET}.1)"
+echo "  embedded  10.24.10.100"
+echo "  vision    10.24.10.101"
 echo ""
 echo "To disconnect:  $0 down"

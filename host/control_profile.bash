@@ -1,7 +1,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # ros config
-export ROS_IP=10.24.15.102
+export ROS_IP=10.24.10.102
 
 # enable ros2 alias to login into docker container
 source $SCRIPT_DIR/../docker/concert-noble-ros2/setup.sh
@@ -10,8 +10,8 @@ source $SCRIPT_DIR/../docker/concert-noble-ros2/setup.sh
 export ZENOH_BRIDGE_ARGS=""
 
 # ssh aliases
-alias ssh_embedded='ssh embedded@10.24.15.100'
-alias ssh_vision='ssh concert@10.24.15.101'
+alias ssh_embedded='ssh embedded@10.24.10.100'
+alias ssh_vision='ssh concert@10.24.10.101'
 
 # config path
 export CONFIG_PATH_DOCKER=docker/control_profile_docker.bash

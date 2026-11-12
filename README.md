@@ -6,14 +6,14 @@ Configuration files for the CONCERT robot: shell profiles, Docker containers, Wi
 
 ## Network overview
 
-The robot network is a dedicated LAN (`10.24.15.0/24`) managed by the onboard router. Three PCs live on this LAN:
+The robot network is a dedicated LAN (`10.24.10.0/24`) managed by the onboard router. Three PCs live on this LAN:
 
 | Host | Role | User | IP |
 |---|---|---|---|
-| embedded | Embedded PC | `embedded` | `10.24.15.100` |
-| vision | Vision / perception PC (Jetson) | `concert` | `10.24.15.101` |
-| control | Control PC | `concert` | `10.24.15.102` |
-| `concert-robot` (TBD) | Router / gateway | `admin` | `10.24.15.1` |
+| embedded | Embedded PC | `embedded` | `10.24.10.100` |
+| vision | Vision / perception PC (Jetson) | `concert` | `10.24.10.101` |
+| control | Control PC | `concert` | `10.24.10.102` |
+| `concert-robot` (TBD) | Router / gateway | `admin` | `10.24.10.1` |
 
 *Note:* the router's DHCP server is **enabled**. The IPs in the table above are obtained by
 pinning each machine's MAC address to a specific static IP from the router settings
@@ -63,19 +63,19 @@ Each PC has a host-side shell profile that sets environment variables, SSH alias
   ```bash
   $ source <path/to/concert_config>/host/control_profile.bash
   ```
-  Sets `ROS_IP=10.24.15.102`, `RENDER_GID` (for VA hardware acceleration), the concert launcher output folder, and sources the `concert-noble-ros2` Docker helper (which provides the `concert` shell function — see below).
+  Sets `ROS_IP=10.24.10.102`, `RENDER_GID` (for VA hardware acceleration), the concert launcher output folder, and sources the `concert-noble-ros2` Docker helper (which provides the `concert` shell function — see below).
 
 - **embedded:**
   ```bash
   $ source <path/to/concert_config>/host/embedded_profile.bash
   ```
-  Sets `ROS_IP=10.24.15.100`, `KERNEL_VER`, the concert launcher output folder, and sources the `concert-noble-ros2-xeno` Docker helper.
+  Sets `ROS_IP=10.24.10.100`, `KERNEL_VER`, the concert launcher output folder, and sources the `concert-noble-ros2-xeno` Docker helper.
 
 - **vision:**
   ```bash
   $ source <path/to/concert_config>/host/perception_profile.bash
   ```
-  Sets `ROS_IP=10.24.15.101`, the concert launcher output folder, and sources the `concert-noble-ros2-jetpack-r36.5` Docker helper.
+  Sets `ROS_IP=10.24.10.101`, the concert launcher output folder, and sources the `concert-noble-ros2-jetpack-r36.5` Docker helper.
 
 ### 3. Start a Docker container with the `concert` alias
 
@@ -137,7 +137,7 @@ $ concert_connect down     # disconnect VPN
 
 Internally it runs two steps, which can also be invoked independently:
 
-1. **`concert_connect_wg`** — calls `network/wg/connect-wg.bash` to establish a WireGuard tunnel into the robot LAN. On first run it generates a local keypair under `~/.wireguard/` and registers a dynamic peer on the control PC. You will be prompted once for the remote machine password. The tunnel gives the client full IP-level access to the robot LAN (`10.24.15.0/24`) and the VPN subnet (`10.0.0.0/24`).
+1. **`concert_connect_wg`** — calls `network/wg/connect-wg.bash` to establish a WireGuard tunnel into the robot LAN. On first run it generates a local keypair under `~/.wireguard/` and registers a dynamic peer on the control PC. You will be prompted once for the remote machine password. The tunnel gives the client full IP-level access to the robot LAN (`10.24.10.0/24`) and the VPN subnet (`10.0.0.0/24`).
 
 2. **`concert_connect_zenoh`** — starts the `zenoh_bridge_client` container, which connects to the `zenoh_bridge_server` running on the control PC over the WireGuard tunnel. This bridges ROS 2 topics across the link without relying on DDS multicast, which does not work over a routed VPN.
 
@@ -146,7 +146,7 @@ Internally it runs two steps, which can also be invoked independently:
 Direct ROS 2 / DDS discovery relies on multicast, which is unavailable across a routed WireGuard tunnel. Instead, a pair of Zenoh bridges are used to forward ROS 2 traffic over a unicast TCP connection:
 
 ```
-  [ Remote client ]                          [ control  10.24.15.102, VPN 10.0.0.1 ]
+  [ Remote client ]                          [ control  10.24.10.102, VPN 10.0.0.1 ]
   ┌───────────────────────────────┐          ┌───────────────────────────────────┐
   │ ROS 2 (CycloneDDS, :localhost)│          │  ROS 2 (CycloneDDS, robot LAN)    │
   │          ↕                    │          │          ↕                        │
@@ -166,7 +166,7 @@ Direct ROS 2 / DDS discovery relies on multicast, which is unavailable across a 
 Once the VPN tunnel is up, the full robot LAN is reachable:
 
 ```bash
-$ ssh_control    # → concert@control   (10.24.15.102)
-$ ssh_embedded   # → embedded@embedded (10.24.15.100)
-$ ssh_vision     # → concert@vision    (10.24.15.101)
+$ ssh_control    # → concert@control   (10.24.10.102)
+$ ssh_embedded   # → embedded@embedded (10.24.10.100)
+$ ssh_vision     # → concert@vision    (10.24.10.101)
 ```

@@ -3,9 +3,9 @@ context:
   params:
     hw_type: ec_pos
   .defines:
-    - &embedded embedded@10.24.15.100
-    - &control concert@10.24.15.102
-    - &vision concert@10.24.15.101
+    - &embedded embedded@10.24.10.100
+    - &control concert@10.24.10.102
+    - &vision concert@10.24.10.101
 
     - &docker-xeno  concert-noble-ros2-xeno-exp-1
     - &docker-base  concert-noble-ros2-dev-1

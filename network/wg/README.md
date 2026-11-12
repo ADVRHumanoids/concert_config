@@ -1,7 +1,7 @@
 # WireGuard Setup
 
-Remote access VPN into the concert LAN (`10.24.15.0/24`).  
-The WireGuard **server** runs on the control PC (`10.24.15.102`), reachable from the WAN on UDP port `51820`
+Remote access VPN into the concert LAN (`10.24.10.0/24`).  
+The WireGuard **server** runs on the control PC (`10.24.10.102`), reachable from the WAN on UDP port `51820`
 through the router `concert-robot` (hostname TBD, see `ROUTER_HOST` in `connect-wg.bash`).
 
 Peer model:
@@ -96,7 +96,7 @@ PrivateKey = <contents of ~/pilot.key>
 [Peer]
 PublicKey           = <contents of /etc/wireguard/server.pub on the control PC>
 Endpoint            = <concert-robot router hostname or public IP>:51820
-AllowedIPs          = 10.0.0.0/24, 10.24.15.0/24
+AllowedIPs          = 10.0.0.0/24, 10.24.10.0/24
 PersistentKeepalive = 25
 ```
 
@@ -133,7 +133,7 @@ PrivateKey = <client private key>
 [Peer]
 PublicKey           = <contents of /etc/wireguard/server.pub on the control PC>
 Endpoint            = <concert-robot router hostname or public IP>:51820
-AllowedIPs          = 10.0.0.0/24, 10.24.15.0/24
+AllowedIPs          = 10.0.0.0/24, 10.24.10.0/24
 PersistentKeepalive = 25
 ```
 
@@ -166,9 +166,9 @@ After connecting it prints the assigned VPN IP and reachable hosts:
 
 ```
 Connected as 10.0.0.10
-  control   10.24.15.102  (10.0.0.1)
-  embedded  10.24.15.100
-  vision    10.24.15.101
+  control   10.24.10.102  (10.0.0.1)
+  embedded  10.24.10.100
+  vision    10.24.10.101
 ```
 
 ### Disconnect
@@ -187,9 +187,9 @@ The peer is also cleared automatically on server reboot or tunnel restart.
 ```bash
 # from any client
 ping 10.0.0.1        # control PC VPN address
-ping 10.24.15.102    # control PC LAN
-ping 10.24.15.100    # embedded PC
-ping 10.24.15.101    # vision PC
+ping 10.24.10.102    # control PC LAN
+ping 10.24.10.100    # embedded PC
+ping 10.24.10.101    # vision PC
 
 # on the server — show active tunnels and last handshake times
 sudo wg show
@@ -201,8 +201,8 @@ sudo wg show
 
 | Host           | LAN IP        | VPN IP    | Peer type |
 |----------------|---------------|-----------|-----------|
-| control        | 10.24.15.102  | 10.0.0.1  | server    |
+| control        | 10.24.10.102  | 10.0.0.1  | server    |
 | pilot-pc       | —             | 10.0.0.2  | static    |
-| embedded       | 10.24.15.100  | —         | —         |
-| vision         | 10.24.15.101  | —         | —         |
+| embedded       | 10.24.10.100  | —         | —         |
+| vision         | 10.24.10.101  | —         | —         |
 | *dynamic-N*    | —             | 10.0.0.N  | dynamic   |

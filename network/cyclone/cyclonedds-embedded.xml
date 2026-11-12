@@ -10,12 +10,12 @@
 
     <Discovery>
       <Peers>
-        <Peer Address="10.24.15.100"/>
-        <Peer Address="10.24.15.101"/>
-        <Peer Address="10.24.15.102"/>
+        <Peer Address="10.24.10.100"/>
+        <Peer Address="10.24.10.101"/>
+        <Peer Address="10.24.10.102"/>
 
         <!-- Optional (experimental, commented out): include WG client if it must be visible from robot LAN nodes.
-             This only works if routing/firewall allows 10.24.15.x <-> 10.0.0.10. -->
+             This only works if routing/firewall allows 10.24.10.x <-> 10.0.0.10. -->
         <!-- <Peer Address="10.0.0.10"/> -->
       </Peers>
     </Discovery>
