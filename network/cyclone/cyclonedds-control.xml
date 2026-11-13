@@ -6,8 +6,8 @@
         <!-- WireGuard interface (experimental, commented out) -->
         <!-- <NetworkInterface name="wg0" address="10.0.0.1" priority="100" multicast="false"/> -->
 
-        <!-- Robot/server LAN interface: replace eno2 with the actual interface name -->
-        <NetworkInterface name="eno2" address="10.24.10.102" priority="100" multicast="false"/>
+        <!-- Robot/server LAN interface -->
+        <NetworkInterface name="enp5s0" address="10.24.10.102" priority="100" multicast="false"/>
       </Interfaces>
 
       <!-- Allow multicast only where the interface allows it.
