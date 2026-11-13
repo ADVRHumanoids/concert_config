@@ -23,11 +23,16 @@ sudo apt update && sudo apt install -y wireguard
 Run on the **control PC**:
 
 ```bash
-wg genkey | sudo tee /etc/wireguard/server.key | wg pubkey | sudo tee /etc/wireguard/server.pub
-sudo chmod 600 /etc/wireguard/server.key
-sudo chmod 644 /etc/wireguard/server.pub  # public key should be world readable
-sudo chmod +x /etc/wireguard
+# Generate the private key only once: regenerating it invalidates every client config
+sudo test -f /etc/wireguard/server.key || \
+    (umask 077; wg genkey | sudo tee /etc/wireguard/server.key > /dev/null)
+# Derive the public key from the private key, so the two always match
+sudo sh -c 'wg pubkey < /etc/wireguard/server.key > /etc/wireguard/server.pub'
+sudo chmod 644 /etc/wireguard/server.pub  # read without sudo by connect-wg.bash
+sudo chmod +x /etc/wireguard              # lets non-root users reach server.pub
 ```
+
+`server.key` is the only copy of the private key. `wg0.conf` loads it at startup and MUST NOT contain it.
 
 ---
 
@@ -45,11 +50,13 @@ Create `/etc/wireguard/wg0.conf` on the **control PC** (template: `wg0.conf`):
 [Interface]
 Address    = 10.0.0.1/24
 ListenPort = 51820
-PrivateKey = <contents of /etc/wireguard/server.key>
 
-# Route traffic into the robot LAN — replace <LAN_IFACE> with actual interface
-PostUp   = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eno2 -j MASQUERADE
-PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eno2 -j MASQUERADE
+# Private key is loaded from file. It MUST NOT be pasted here.
+PostUp   = wg set %i private-key /etc/wireguard/server.key
+
+# Route traffic into the robot LAN — 'enp5s0' is the control PC LAN interface
+PostUp   = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -m state --state RELATED,ESTABLISHED -j ACCEPT; iptables -t nat -A POSTROUTING -o enp5s0 -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -m state --state RELATED,ESTABLISHED -j ACCEPT; iptables -t nat -D POSTROUTING -o enp5s0 -j MASQUERADE
 
 # ── Static peer: Pilot PC ──────────────────────────────────────────────────
 [Peer]
@@ -72,6 +79,12 @@ sudo sysctl -p /etc/sysctl.d/99-wireguard.conf
 ```bash
 sudo systemctl enable --now wg-quick@wg0
 sudo wg show   # verify
+```
+
+The running key MUST match `server.pub`, otherwise clients get no handshake:
+
+```bash
+[ "$(sudo wg show wg0 public-key)" = "$(cat /etc/wireguard/server.pub)" ] && echo OK || echo MISMATCH
 ```
 
 ---
