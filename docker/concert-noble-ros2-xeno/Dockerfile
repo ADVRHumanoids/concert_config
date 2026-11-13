@@ -1,15 +1,4 @@
-FROM hhcmhub/xbot2-noble-rt:noble-ros2-linuxv5-20260702141901
-
-ARG ROS_IP
-
-# crash if ROS_IP is not set
-RUN if [ -z "$ROS_IP" ]; then echo "ROS_IP is not set"; exit 1; fi
-
-# setup ros2
-RUN git clone https://github.com/advrhumanoids/ros2_config.git && \
-    cd ros2_config && \
-    mkdir build && cd build && \
-    cmake .. -DROS2_IP=$ROS_IP
+FROM hhcmhub/xbot2-noble-rt
 
 # add robot config to bashrc
 RUN echo 'source ~/xbot2_ws/src/concert_config/$CONFIG_PATH_DOCKER' >> ~/.bashrc
