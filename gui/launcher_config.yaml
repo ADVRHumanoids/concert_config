@@ -101,3 +101,17 @@ drill_camera:
     config_file:=/home/user/xbot2_ws/src/concert_config/data/perception/drill_camera_E.yaml
   ready_check: timeout 3 ros2 topic echo --once /drill_camera_E/color/image_raw --no-arr
   show_ui: false
+
+# VectorNav IMU/GPS on the control pc, configured by data/control/vectornav.yaml. Imu on /vectornav/imu, as the sims'.
+# one pipeline: Ctrl-C reaches both nodes; driver stdout to stderr, so the pipe stays empty
+imu:
+  machine: *control
+  docker: *docker-base
+  cmd: >-
+    ros2 run vectornav vectornav
+    --ros-args --params-file /home/user/xbot2_ws/src/concert_config/data/control/vectornav.yaml
+    1>&2 |
+    ros2 run vectornav vn_sensor_msgs
+    --ros-args --params-file /home/user/xbot2_ws/src/concert_config/data/control/vectornav.yaml
+  ready_check: timeout 5 ros2 topic echo --once /vectornav/imu --no-arr
+  show_ui: false
