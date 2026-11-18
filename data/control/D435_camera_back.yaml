@@ -1,0 +1,6 @@
+# realsense2_camera rs_launch.py config_file of D435_camera_back (serial from concert_resources D435_camera_back.json).
+# Streams as the sims': 424x240 at 6 Hz. Frames come from the URDF, so the driver MUST NOT publish TF.
+serial_no: "236522071300"
+rgb_camera.color_profile: 424x240x6
+depth_module.depth_profile: 424x240x6
+publish_tf: false

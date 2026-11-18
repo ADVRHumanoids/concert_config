@@ -70,3 +70,24 @@ back_lidar:
     --params-file /home/user/xbot2_ws/src/concert_config/ouster/velodyne_vlp16_back.yaml
   ready_check: timeout 3 ros2 topic echo --once /VLP16_lidar_back/velodyne_points
   show_ui: false
+
+# RealSense D435s on the control pc, configured by data/control/D435_camera_*.yaml
+front_camera:
+  machine: *control
+  docker: *docker-base
+  cmd: >-
+    ros2 launch realsense2_camera rs_launch.py
+    camera_namespace:=/ camera_name:=D435_camera_front
+    config_file:=/home/user/xbot2_ws/src/concert_config/data/control/D435_camera_front.yaml
+  ready_check: timeout 3 ros2 topic echo --once /D435_camera_front/color/image_raw --no-arr
+  show_ui: false
+
+back_camera:
+  machine: *control
+  docker: *docker-base
+  cmd: >-
+    ros2 launch realsense2_camera rs_launch.py
+    camera_namespace:=/ camera_name:=D435_camera_back
+    config_file:=/home/user/xbot2_ws/src/concert_config/data/control/D435_camera_back.yaml
+  ready_check: timeout 3 ros2 topic echo --once /D435_camera_back/color/image_raw --no-arr
+  show_ui: false
