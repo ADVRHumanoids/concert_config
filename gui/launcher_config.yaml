@@ -91,3 +91,13 @@ back_camera:
     config_file:=/home/user/xbot2_ws/src/concert_config/data/control/D435_camera_back.yaml
   ready_check: timeout 3 ros2 topic echo --once /D435_camera_back/color/image_raw --no-arr
   show_ui: false
+
+drill_camera:
+  machine: *vision
+  docker: *docker-nvidia
+  cmd: >-
+    ros2 launch realsense2_camera rs_launch.py
+    camera_namespace:=/ camera_name:=drill_camera_E
+    config_file:=/home/user/xbot2_ws/src/concert_config/data/perception/drill_camera_E.yaml
+  ready_check: timeout 3 ros2 topic echo --once /drill_camera_E/color/image_raw --no-arr
+  show_ui: false
