@@ -42,8 +42,8 @@ xbot2:
             hw_type: dummy
 
 front_lidar:
-  machine: *control
-  docker: *docker-base
+  machine: *vision
+  docker: *docker-nvidia
   # one pipeline: Ctrl-C reaches both nodes; driver stdout to stderr, so the pipe stays empty
   cmd: >-
     ros2 run velodyne_driver velodyne_driver_node
@@ -57,8 +57,8 @@ front_lidar:
   show_ui: false
 
 back_lidar:
-  machine: *vision
-  docker: *docker-nvidia
+  machine: *control
+  docker: *docker-base
   # one pipeline: Ctrl-C reaches both nodes; driver stdout to stderr, so the pipe stays empty
   cmd: >-
     ros2 run velodyne_driver velodyne_driver_node
