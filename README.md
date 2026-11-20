@@ -170,3 +170,47 @@ $ ssh_control    # → concert@control   (10.24.10.102)
 $ ssh_embedded   # → embedded@embedded (10.24.10.100)
 $ ssh_vision     # → concert@vision    (10.24.10.101)
 ```
+
+---
+
+## C · Development container
+
+The `concert-noble-ros2` image also serves as a development environment on any PC. Use the `dev-nvidia` service if the host has an NVIDIA GPU, and the plain `dev` service otherwise.
+
+### 1. Host dependencies
+
+- [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) with the Compose plugin. Add your user to the `docker` group so `docker` runs without `sudo`:
+  ```bash
+  $ sudo usermod -aG docker $USER   # then log out and back in
+  ```
+- An X11 session and `xhost` (package `x11-xserver-utils`), so GUI applications in the container can open on the host display.
+- `dev-nvidia` only:
+  - the NVIDIA proprietary driver; `nvidia-smi` must work on the host;
+  - the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html), registered with Docker:
+    ```bash
+    $ sudo nvidia-ctk runtime configure --runtime=docker
+    $ sudo systemctl restart docker
+    ```
+
+### 2. Build and run with Docker Compose
+
+`ROS_IP` MUST be set when the image is built; the build fails without it. `CONFIG_PATH_DOCKER` selects the profile sourced in the container, relative to this repository's root. Both are set by the host profiles; set them by hand on a PC that does not source one:
+
+```bash
+$ cd <path/to/concert_config>/docker/concert-noble-ros2
+$ export ROS_IP=127.0.0.1   # only needs to be non-empty
+$ export CONFIG_PATH_DOCKER=docker/client_profile_docker.bash
+$ xhost +local:root
+$ docker compose up dev-nvidia -d --no-recreate   # or: dev
+$ docker compose exec dev-nvidia bash             # or: dev
+```
+
+The first `up` builds the image. Run `docker compose build dev-nvidia` to rebuild it after a `Dockerfile` change. `dev-nvidia` also mounts the host home directory at `/home/user/host`.
+
+With a host profile sourced, `concert dev-nvidia` (or `concert dev`) runs the same `xhost`, `up` and `exec` steps.
+
+Both services use `restart: always`, so the container comes back after a reboot. To stop and remove it:
+
+```bash
+$ docker compose rm -sf dev-nvidia   # or: dev
+```
