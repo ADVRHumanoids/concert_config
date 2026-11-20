@@ -6,4 +6,4 @@ RUN echo 'source ~/xbot2_ws/src/concert_config/$CONFIG_PATH_DOCKER' >> ~/.bashrc
 # concert specific packages
 RUN cd xbot2_ws && \
     sudo chown user src && \
-    forest grow iit-concert-ros-pkg
+    cd recipes/multidof_recipes && git pull origin ros2
