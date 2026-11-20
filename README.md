@@ -75,7 +75,7 @@ Each PC has a host-side shell profile that sets environment variables, SSH alias
   ```bash
   $ source <path/to/concert_config>/host/perception_profile.bash
   ```
-  Sets `ROS_IP=10.24.10.101`, the concert launcher output folder, and sources the `concert-noble-ros2-jetpack-r36.5` Docker helper.
+  Sets `ROS_IP=10.24.10.101`, the concert launcher output folder, and sources the `concert-noble-ros2` Docker helper. Its container is the `dev-nvidia` service.
 
 ### 3. Start a Docker container with the `concert` alias
 
@@ -86,7 +86,7 @@ $ concert dev
 ```
 
 The function runs `docker compose up <service> -d --no-recreate` followed by `docker compose exec <service> bash`, and also calls `xhost +local:root` to allow GUI applications inside the container.
-On the control PC, `dev-intel-va` and `dev-nvidia` start the same container with Intel VA or NVIDIA GPU access.
+On the control PC, `dev-intel-va` and `dev-nvidia` start the same container with Intel VA or NVIDIA GPU access. On the vision PC, use `concert dev-nvidia`.
 
 ### 4. Environment inside the container
 
@@ -96,7 +96,7 @@ When a shell is opened inside a container, the corresponding Docker profile is s
 |---|---|
 | `concert-noble-ros2` (control) | `docker/control_profile_docker.bash` |
 | `concert-noble-ros2-xeno` (embedded) | `docker/embedded_profile_docker.bash` |
-| `concert-noble-ros2-jetpack-r36.5` (vision) | `docker/perception_profile_docker.bash` |
+| `concert-noble-ros2`, `dev-nvidia` (vision) | `docker/perception_profile_docker.bash` |
 
 All three profiles source `docker/generic_profile_docker.bash`, which sets `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp` and the concert launcher's default config (`gui/launcher_config.yaml`). Each then sets the appropriate `CYCLONEDDS_URI` pointing to the corresponding CycloneDDS XML config under `network/cyclone/`. The embedded profile additionally sets `ECAT_MASTER_CONFIG` and the `ecat_master` / `ecat_master_gdb` aliases for the EtherCAT master.
 
