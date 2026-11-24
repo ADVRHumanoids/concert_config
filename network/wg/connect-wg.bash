@@ -14,6 +14,9 @@ SERVER_WG_PORT="51820"
 VPN_SUBNET="10.0.0"
 KEY_DIR="$HOME/.wireguard"
 CONF_FILE="/tmp/wg-concert.conf"
+# sshpass cannot answer the host key prompt: an unknown key is saved on first connection
+# (as answering "yes" would), a changed one is still refused
+SSH_OPTS=(-o StrictHostKeyChecking=accept-new)
 
 # ── Guards ────────────────────────────────────────────────────────────────────
 for cmd in wg wg-quick ssh sshpass; do
@@ -29,7 +32,7 @@ SUDO_PASS="$REMOTE_PASS"
 if [[ -f "$CONF_FILE" ]]; then
     LOCAL_PUBKEY=$(wg pubkey < "$KEY_DIR/concert.key")
     echo "Removing peer from server..."
-    echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "$SERVER_SSH" "sudo -S -p '' wg set $SERVER_WG_IFACE peer $LOCAL_PUBKEY remove" || true
+    echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "${SSH_OPTS[@]}" "$SERVER_SSH" "sudo -S -p '' wg set $SERVER_WG_IFACE peer $LOCAL_PUBKEY remove" || true
     sudo wg-quick down "$CONF_FILE"
     rm -f "$CONF_FILE"
     echo "Disconnected."
@@ -54,10 +57,11 @@ LOCAL_PUBKEY=$(cat "$KEY_DIR/concert.pub")
 # ── Fetch server public key ───────────────────────────────────────────────────
 # server.pub is world-readable (chmod 644) — no sudo needed.
 echo "Connecting to $SERVER_SSH ..."
-SERVER_PUBKEY=$(sshpass -p "$REMOTE_PASS" ssh "$SERVER_SSH" "cat /etc/wireguard/server.pub" | tr -d '\r')
+SERVER_PUBKEY=$(sshpass -p "$REMOTE_PASS" ssh "${SSH_OPTS[@]}" "$SERVER_SSH" "cat /etc/wireguard/server.pub" | tr -d '\r') \
+    || { echo "SSH to $SERVER_SSH failed: wrong password, host unreachable or changed host key" >&2; exit 1; }
 
 # ── Pick next free VPN address (start from .10 to leave room for static peers) ─
-USED_IPS=$(echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "$SERVER_SSH" \
+USED_IPS=$(echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "${SSH_OPTS[@]}" "$SERVER_SSH" \
     "sudo -S -p '' wg show $SERVER_WG_IFACE allowed-ips 2>/dev/null \
      | awk '{print \$2}' | cut -d/ -f1" | tr -d '\r' || true)
 
@@ -74,7 +78,7 @@ done
 echo "Assigned VPN address: $VPN_IP"
 
 # ── Register dynamic peer on the server ──────────────────────────────────────
-echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "$SERVER_SSH" "sudo -S -p '' wg set $SERVER_WG_IFACE peer $LOCAL_PUBKEY allowed-ips ${VPN_IP}/32"
+echo "$SUDO_PASS" | sshpass -p "$REMOTE_PASS" ssh "${SSH_OPTS[@]}" "$SERVER_SSH" "sudo -S -p '' wg set $SERVER_WG_IFACE peer $LOCAL_PUBKEY allowed-ips ${VPN_IP}/32"
 unset SUDO_PASS REMOTE_PASS
 echo "Peer registered (non-persistent, cleared on server reboot)."
 

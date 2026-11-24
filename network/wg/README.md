@@ -174,6 +174,8 @@ SSH access to `concert@concert-robot` must be reachable from the client (either 
 ```
 
 You will be prompted for the password of `concert@concert-robot`.  
+No prior SSH login is needed: on first connection the router's host key is saved to `~/.ssh/known_hosts`;
+if it later changes, the script stops with an error.  
 On first run the script generates a keypair under `~/.wireguard/` (`concert.key` / `concert.pub`).  
 After connecting it prints the assigned VPN IP and reachable hosts:
 
