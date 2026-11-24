@@ -4,3 +4,5 @@ serial_no: "236522070709"
 rgb_camera.color_profile: 424x240x6
 depth_module.depth_profile: 424x240x6
 publish_tf: false
+# concert_vision's blob detector reads aligned_depth_to_color
+align_depth.enable: true
