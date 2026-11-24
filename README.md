@@ -141,6 +141,16 @@ Internally it runs two steps, which can also be invoked independently:
 
 2. **`concert_connect_zenoh`** — starts the `zenoh_bridge_client` container, which connects to the `zenoh_bridge_server` running on the control PC over the WireGuard tunnel. This bridges ROS 2 topics across the link without relying on DDS multicast, which does not work over a routed VPN.
 
+**Quick connect, SSH only:** [`network/wg/connect-wg.bash`](network/wg/connect-wg.bash) alone brings up the WireGuard tunnel, without the client profile or the Zenoh bridge (see [network/wg/README.md §7](network/wg/README.md#7--dynamic-peers-via-connect-wgbash)).
+It is useful only to SSH into the robot PCs: no ROS 2 topic is streamed to the client.
+
+```bash
+$ <path/to/concert_config>/network/wg/connect-wg.bash        # connect
+$ <path/to/concert_config>/network/wg/connect-wg.bash down   # disconnect
+```
+
+Without the client profile the `ssh_*` aliases are not defined: SSH by IP, e.g. `ssh concert@10.24.10.102` (IPs in the [network overview](#network-overview)).
+
 ### 3. Zenoh-over-WireGuard architecture
 
 Direct ROS 2 / DDS discovery relies on multicast, which is unavailable across a routed WireGuard tunnel. Instead, a pair of Zenoh bridges are used to forward ROS 2 traffic over a unicast TCP connection:
