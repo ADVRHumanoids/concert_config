@@ -66,14 +66,17 @@ xbotcore_plugins:
     type: gcomp_example
     params:
       enabled_chains: {value: [chain_E], type: vector<string>}
+  # base twist from the wrench at ee_E (force_follow_me force_estimation.launch.py)
   force_follow_me:
     type: force_follow_me
     thread: nrt_main
     params:
-      max_force: {value: 85.0, type: double}  # 75
-      max_lin_velocity: {value: 0.07, type: double}
-      max_ang_velocity: {value: 0.3, type: double}
-      force_threshold: {value: 8.0, type: double}  # 8.0
+      wrench_topic: {value: /force_estimation/ee_E, type: string}
+      # maps of wrench/twist indices (0-5, written as strings)
+      wrench_to_twist_map: {value: {'0': 0, '1': 5}, type: map<int>}  # Fx -> vx, Fy -> wz
+      wrench_threshold: {value: {'0': 8.0, '1': 8.0}, type: map<double>}
+      wrench_limits: {value: {'0': 85.0, '1': 85.0}, type: map<double>}
+      twist_limits: {value: {'0': 0.3, '1': 0.3, '5': 0.6}, type: map<double>}
       use_safety: {value: true, type: bool}
       sensor_type: {value: 0, type: int}  # 0 for sonar 1 for lidar [wip]
       sensors:
@@ -82,8 +85,6 @@ xbotcore_plugins:
       sensor_threshold:
         value: [0.75, 0.3]  # max min threshold
         type: vector<double>
-      # sensor_link_name: {value: "handle_gripping_point_E", type: string}
-      sensor_link_name: {value: "ee_E", type: string}
     remap:
       cmd_vel_V6: omnisteering/cmd_vel_V6
 
