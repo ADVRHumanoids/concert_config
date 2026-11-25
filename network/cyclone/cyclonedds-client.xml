@@ -1,0 +1,22 @@
+<CycloneDDS>
+  <Domain Id="any">
+
+    <!-- Remote client: the Zenoh bridge MUST discover local nodes over
+         loopback. lo has no multicast, so discovery uses a unicast peer. -->
+    <General>
+      <Interfaces>
+        <NetworkInterface name="lo"/>
+      </Interfaces>
+      <AllowMulticast>false</AllowMulticast>
+    </General>
+
+    <Discovery>
+      <Peers>
+        <Peer Address="127.0.0.1"/>
+      </Peers>
+      <ParticipantIndex>auto</ParticipantIndex>
+      <MaxAutoParticipantIndex>32</MaxAutoParticipantIndex>
+    </Discovery>
+
+  </Domain>
+</CycloneDDS>

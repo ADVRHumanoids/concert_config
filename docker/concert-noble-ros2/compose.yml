@@ -83,6 +83,7 @@ services:
     volumes:
       - ../../:/etc/concert_config:ro
     environment:
+      - CYCLONEDDS_URI=file:///etc/concert_config/network/cyclone/cyclonedds-client.xml
       - ROS_DISTRO=jazzy
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID
